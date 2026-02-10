@@ -92,113 +92,84 @@ function validarRegistro() {
 </script>
 
 <template>
-<Header></Header>
   <div class="container mt-5">
-  <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-    <div class="row g-0"> <div class="col-lg-6 d-none d-lg-block">
-        <img 
-          src="/public/images/register-image.jpg" 
-          class="img-fluid h-100 w-100 object-fit-cover" 
-          alt="Registro"
-        />
-      </div>
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+      <div class="row g-0">
+        <div class="col-lg-6 d-none d-lg-block">
+          <img src="/images/register-image.jpg" class="img-fluid h-100 w-100 object-fit-cover" alt="Registro" />
+        </div>
 
-      <div class="col-lg-6 col-12 d-flex align-items-center bg-white">
-        <div class="card-body p-4 p-lg-5 text-black">
+        <div class="col-lg-6 col-12 d-flex align-items-center bg-white">
+          <div class="card-body p-4 p-lg-5 text-black">
 
-          <div class="text-center mb-4">
-            <h2 class="fw-bold text-primary text-uppercase">Regístrate</h2>
+            <div class="text-center mb-4">
+              <h2 class="fw-bold text-primary text-uppercase">Regístrate</h2>
+            </div>
+
+            <form>
+              <div class="mb-3 input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="bi bi-person-fill text-primary"></i>
+                </span>
+                <input class="form-control border-start-0 border-end-0" :class="nameInput" v-model.trim="name"
+                  type="text" placeholder="Nombre" />
+                <span class="input-group-text bg-white border-start-0">
+                  <i class="bi bi-check text-success" v-if="nameInput == 'valid-input'"></i>
+                </span>
+              </div>
+
+              <div class="mb-3 input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="bi bi-envelope-fill text-primary"></i>
+                </span>
+                <input class="form-control border-start-0 border-end-0" :class="emailInput" v-model.trim="email"
+                  type="text" placeholder="Email" />
+                <span class="input-group-text bg-white border-start-0">
+                  <i class="bi bi-check text-success" v-if="emailInput == 'valid-input'"></i>
+                </span>
+              </div>
+
+              <div class="mb-3 input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="bi bi-key-fill text-primary"></i>
+                </span>
+                <input class="form-control border-start-0 border-end-0" :class="passwordInput" v-model.trim="password"
+                  type="password" placeholder="Contraseña" />
+                <span class="input-group-text bg-white border-start-0">
+                  <i class="bi bi-check text-success" v-if="passwordInput == 'valid-input'"></i>
+                </span>
+              </div>
+
+              <div class="mb-4 input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="bi bi-key-fill text-primary"></i>
+                </span>
+                <input class="form-control border-start-0 border-end-0" :class="confirmPasswordInput"
+                  v-model.trim="confirmPassword" type="password" placeholder="Repite la contraseña" />
+                <span class="input-group-text bg-white border-start-0">
+                  <i class="bi bi-check text-success" v-if="confirmPasswordInput == 'valid-input'"></i>
+                </span>
+              </div>
+
+              <div class="d-grid mb-3">
+                <input type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold" value="Crea tu cuenta"
+                  @click.prevent="validarRegistro()" />
+              </div>
+
+              <div class="text-center">
+                <p class="mb-0 text-muted">¿Ya tienes cuenta?</p>
+                <RouterLink to="/login" class="text-primary fw-bold text-decoration-none">
+                  Inicia sesión aquí
+                </RouterLink>
+              </div>
+            </form>
+
           </div>
-
-          <form>
-            <div class="mb-3 input-group">
-              <span class="input-group-text bg-light border-end-0">
-                <i class="bi bi-person-fill text-primary"></i>
-              </span>
-              <input
-                class="form-control border-start-0 border-end-0"
-                :class="nameInput"
-                v-model.trim="name"
-                type="text"
-                placeholder="Nombre"
-              />
-              <span class="input-group-text bg-white border-start-0">
-                 <i class="bi bi-check text-success" v-if="nameInput == 'valid-input'"></i>
-              </span>
-            </div>
-            
-            <div class="mb-3 input-group">
-              <span class="input-group-text bg-light border-end-0">
-                <i class="bi bi-envelope-fill text-primary"></i>
-              </span>
-              <input
-                class="form-control border-start-0 border-end-0"
-                :class="emailInput"
-                v-model.trim="email"
-                type="text"
-                placeholder="Email"
-              />
-              <span class="input-group-text bg-white border-start-0">
-                 <i class="bi bi-check text-success" v-if="emailInput == 'valid-input'"></i>
-              </span>
-            </div>
-
-            <div class="mb-3 input-group">
-              <span class="input-group-text bg-light border-end-0">
-                <i class="bi bi-key-fill text-primary"></i>
-              </span>
-              <input
-                class="form-control border-start-0 border-end-0"
-                :class="passwordInput"
-                v-model.trim="password"
-                type="password"
-                placeholder="Contraseña"
-              />
-              <span class="input-group-text bg-white border-start-0">
-                 <i class="bi bi-check text-success" v-if="passwordInput == 'valid-input'"></i>
-              </span>
-            </div>
-
-            <div class="mb-4 input-group">
-              <span class="input-group-text bg-light border-end-0">
-                <i class="bi bi-key-fill text-primary"></i>
-              </span>
-              <input
-                class="form-control border-start-0 border-end-0"
-                :class="confirmPasswordInput"
-                v-model.trim="confirmPassword"
-                type="password"
-                placeholder="Repite la contraseña"
-              />
-              <span class="input-group-text bg-white border-start-0">
-                 <i class="bi bi-check text-success" v-if="confirmPasswordInput == 'valid-input'"></i>
-              </span>
-            </div>
-
-            <div class="d-grid mb-3">
-              <input 
-                type="submit" 
-                class="btn btn-primary btn-lg rounded-pill fw-bold" 
-                value="Crea tu cuenta" 
-                @click.prevent="validarRegistro()" 
-              />
-            </div>
-
-            <div class="text-center">
-              <p class="mb-0 text-muted">¿Ya tienes cuenta?</p>
-              <RouterLink to="/login" class="text-primary fw-bold text-decoration-none">
-                Inicia sesión aquí
-              </RouterLink>
-            </div>
-          </form>
-
         </div>
       </div>
     </div>
   </div>
-</div>
 </template>
-
 <style>
 .valid-input {
   background-color: #d4edda;
@@ -206,9 +177,5 @@ function validarRegistro() {
 
 .error-input {
   background-color: #f8d7da;
-}
-
-body {
-  background-color: #FDF0D5;
 }
 </style>
