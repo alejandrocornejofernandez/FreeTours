@@ -23,6 +23,21 @@ const router = createRouter({
       path: '/gestionUsuarios',
       name: 'gestionUsuarios',
       component: () => import('@/views/GestionUsuarios.vue')
+    },
+    {
+      path: '/gestionRutas',
+      name: 'gestionRutas',
+      component: () => import('@/views/GestionRutas.vue')
+    },
+    {
+      path: '/gestionRutas/crearRutas',
+      name: 'crearRutas',
+      component: () => import('@/views/CrearRutas.vue')
+    },
+    {
+      path: '/gestionRutas/verRutas',
+      name: 'verRutas',
+      component: () => import('@/views/VerRutas.vue')
     }
   ],
 })

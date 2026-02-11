@@ -20,7 +20,9 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
+                        <RouterLink to="/gestionRutas" class="nav-link"><i
+                                class="bi bi-geo-alt-fill text-primary"></i><span class="ml-1">Gestión de rutas</span>
+                        </RouterLink>
                     </li>
 
                     <li class="nav-item">

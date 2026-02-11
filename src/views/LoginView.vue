@@ -64,7 +64,7 @@ async function login() {
           <div class="card-body p-4 p-lg-5">
 
             <div class="text-center mb-4">
-              <h2 class="fw-bold text-uppercase" style="color: var(--color-dark);">Iniciar sesión</h2>
+              <h2 class="fw-bold text-uppercase">Iniciar sesión</h2>
               <div v-if="errorMessage != ''" class="alert alert-danger">{{ errorMessage }}</div>
             </div>
 
