@@ -25,15 +25,33 @@ async function getRoutes() {
 
     }
 }
+
+const fecha = ref('');
+const localidad = ref('');
+async function getRoutesFechaLocalidad() {
+    console.log(fecha.value);
+    try {
+        const peticion = await fetch(`http://localhost:8000/api.php/rutas?fecha=${fecha.value}&localidad=${localidad.value}`, {
+            method: 'GET',
+        });
+
+        const respuesta = await peticion.json();
+        rutas.value = respuesta;
+
+    } catch {
+
+    }
+}
 </script>
 
 <template>
-    <input type="date">
+    <input type="date" v-model="fecha" @change="getRoutesFechaLocalidad()">
     <div class="input-group">
         <span class="input-group-text icon-bg border-end">
             <i class="bi bi-geo-alt-fill text-primary"></i>
         </span>
-        <input class="form-control border-start-0 rounded-pill fw-bold" type="text" placeholder="¿Dónde vas?" />
+        <input v-model="localidad" class="form-control border-start-0 rounded-pill fw-bold" type="text"
+            placeholder="¿Dónde vas?" @change="getRoutesFechaLocalidad()" />
     </div>
 
     <div class="container-fluid">
