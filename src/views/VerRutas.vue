@@ -11,7 +11,7 @@ onMounted(async () => {
     getRoutes()
 })
 
-const rutas = ref('');
+const rutas = ref([]);
 async function getRoutes() {
     try {
         const peticion = await fetch('http://localhost:8000/api.php/rutas', {
@@ -26,26 +26,46 @@ async function getRoutes() {
     }
 }
 
-const fecha = ref('');
+// viene mejor iniciar localidad como '', puesto que es un campo opcional en el GET
+const fecha = ref(null);
 const localidad = ref('');
 async function getRoutesFechaLocalidad() {
     console.log(fecha.value);
-    try {
-        const peticion = await fetch(`http://localhost:8000/api.php/rutas?fecha=${fecha.value}&localidad=${localidad.value}`, {
-            method: 'GET',
-        });
 
-        const respuesta = await peticion.json();
-        rutas.value = respuesta;
+    if ((fecha.value == null || fecha.value == "") && (localidad.value == null || localidad.value == "")) {
+        await getRoutes();
+    } else {
 
-    } catch {
+        try {
+            const peticion = await fetch(`http://localhost:8000/api.php/rutas?fecha=${fecha.value}&localidad=${localidad.value}`, {
+                method: 'GET',
+            });
 
+            const respuesta = await peticion.json();
+            rutas.value = respuesta;
+
+        } catch {
+
+        }
     }
 }
 </script>
 
 <template>
-    <input type="date" v-model="fecha" @change="getRoutesFechaLocalidad()">
+
+    <!-- Fragemento de codigo de VCalendar que hace que se muestre un input de tipo date mucho más estilizado -->
+    <VDatePicker v-model="fecha" mode="date" :masks="{ input: 'DD/MM/YYYY' }"
+        @update:model-value="getRoutesFechaLocalidad">
+        <template #default="{ inputValue, inputEvents }">
+            <div class="input-group">
+                <span class="input-group-text" v-on="inputEvents">
+                    <i class="bi bi-calendar-event"></i>
+                </span>
+                <input class="form-control" :value="inputValue" v-on="inputEvents" readonly />
+            </div>
+        </template>
+    </VDatePicker>
+
     <div class="input-group">
         <span class="input-group-text icon-bg border-end">
             <i class="bi bi-geo-alt-fill text-primary"></i>
@@ -57,7 +77,8 @@ async function getRoutesFechaLocalidad() {
     <div class="container-fluid">
         <div class="row">
             <div v-for="ruta in rutas">
-                <RouteCard :titulo="ruta.titulo" :localidad="ruta.localidad" :descripcion="ruta.descripcion">
+                <RouteCard :id="ruta.id" :titulo="ruta.titulo" :localidad="ruta.localidad"
+                    :descripcion="ruta.descripcion">
                 </RouteCard>
             </div>
         </div>

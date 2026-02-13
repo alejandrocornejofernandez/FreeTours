@@ -38,7 +38,12 @@ const router = createRouter({
       path: '/gestionRutas/verRutas',
       name: 'verRutas',
       component: () => import('@/views/VerRutas.vue')
-    }
+    },
+    {
+  path: '/ruta/:id',
+  name: 'DetalleRuta',
+  component: () => import('@/views/DetalleRutaView.vue')
+}
   ],
 })
 
