@@ -1,14 +1,10 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import router from '@/router';
-
-import Footer from '../components/Footer.vue'
-import Header from '../components/Header.vue'
-import NavBar from '@/components/NavBar.vue';
 
 const users = ref("");
 const mensajeSuccess = ref("");
 
+// función para obtener todos los usuarios
 async function getUsers() {
     try {
         const peticion = await fetch("http://localhost:8000/api.php/usuarios",
@@ -29,6 +25,7 @@ onMounted(async () => {
     getUsers()
 })
 
+// función para borrar un usuario
 async function deleteUser(id) {
     try {
         const peticion = await fetch(`http://localhost:8000/api.php/usuarios?id=${id}`,
@@ -55,12 +52,14 @@ function mensajeSuccessReset() {
 const editUserID = ref(null);
 const userRol = ref(null);
 
+// función para editar el rol
 function editUserRol(id, rol) {
     // activamos el modo edición al pulsar el botón
     editUserID.value = id;
     userRol.value = rol;
 }
 
+// función para actualizar el rol del usuario
 async function saveUserRol(id, rol) {
 
     const updatedRole = {

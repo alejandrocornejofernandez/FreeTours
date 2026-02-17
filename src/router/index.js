@@ -22,28 +22,33 @@ const router = createRouter({
     {
       path: '/gestionUsuarios',
       name: 'gestionUsuarios',
-      component: () => import('@/views/GestionUsuarios.vue')
+      component: () => import('@/views/GestionUsuarios.vue'),
     },
     {
       path: '/gestionRutas',
       name: 'gestionRutas',
-      component: () => import('@/views/GestionRutas.vue')
+      component: () => import('@/views/GestionRutas.vue'),
     },
     {
       path: '/gestionRutas/crearRutas',
       name: 'crearRutas',
-      component: () => import('@/views/CrearRutas.vue')
+      component: () => import('@/views/CrearRutas.vue'),
     },
     {
       path: '/gestionRutas/verRutas',
       name: 'verRutas',
-      component: () => import('@/views/VerRutas.vue')
+      component: () => import('@/views/VerRutas.vue'),
     },
     {
-  path: '/ruta/:id',
-  name: 'DetalleRuta',
-  component: () => import('@/views/DetalleRutaView.vue')
-}
+      path: '/gestionRutas/gestionarRutas',
+      name: 'gestionarRutas',
+      component: () => import('@/views/GestionarRutas.vue'),
+    },
+    {
+      path: '/ruta/:id',
+      name: 'DetalleRuta',
+      component: () => import('@/views/DetalleRutaView.vue'),
+    },
   ],
 })
 
