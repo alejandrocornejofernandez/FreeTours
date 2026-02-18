@@ -1,35 +1,119 @@
 <script setup>
-import { ref } from 'vue';
+import { RouterLink } from 'vue-router';
 
 const props = defineProps({
-  sesion: String
+  sesion: Object
 })
 
+const emits = defineEmits(["cerrarSesion"]);
+
+// función para cerrar la sesión
+function cerrarSesion() {
+
+}
+
+console.log(props.sesion)
 </script>
 
 <template>
-  <header class="container-fluid">
-    <div class="row justify-content-space-around">
-      <div class="col align-self-center">
-        <p class="h1 text-center text-ligth">FREETOURS</p>
-        <div v-if="sesion">
-          <p>{{ props.sesion.nombre }}</p>
-          <i class="bi bi-box-arrow-right" @click="cerrarSesion"></i>
-        </div>
-        <div v-else>
-          <RouterLink to="/login">
-            <div>Iniciar sesión</div>
+  <header class="main-header shadow">
+    <div class="container-fluid d-inline-block align-items-center justify-content-between py-2">
+      <div class="row align-items-start">
+
+        <!-- COLUMNA DEL NOMBRE DE LA WEB-->
+        <div class="col-4">
+          <RouterLink to="/" class="navbar-brand d-flex align-items-center text-decoration-none">
+            <span class="fs-4 fw-bold logo-text">FreeTours</span>
           </RouterLink>
         </div>
+
+        <!-- COLUMNA NAVBAR-->
+        <div class="col-4">
+          <nav class="d-none d-md-flex gap-3">
+
+            <RouterLink to="/" class="header-link">
+              <i class="bi bi-house-door me-1"></i> Inicio
+            </RouterLink>
+
+            <RouterLink to="/gestionUsuarios" class="header-link">
+              <i class="bi bi-people me-1"></i>Gestión de usuarios
+            </RouterLink>
+
+            <RouterLink to="/gestionRutas" class="header-link">
+              <i class="bi bi-map me-1"></i>Gestión de rutas
+            </RouterLink>
+
+          </nav>
+        </div>
+
+        <!-- COLUMNA INICIO SESIÓN-->
+        <div class="col-4 align-self-center justify-content-end">
+          <RouterLink to="/login" class="header-link" v-if="sesion == null">Iniciar sesión</RouterLink>
+          <div v-else>
+            <span class="user">Bienvenido, {{ sesion.nombre }}</span>
+            <button class="logout-button"><i class="bi bi-box-arrow-right"></i></button>
+          </div>
+        </div>
+
       </div>
-
-
     </div>
   </header>
 </template>
 
-<style>
-.container-fluid {
-  background-color: var(--color-dark);
+<style scoped>
+.main-header {
+  background-color: #386641;
+  border-bottom: 3px solid #6A994E;
+}
+
+.logo-text {
+  color: white;
+  letter-spacing: 1px;
+}
+
+.header-link {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 15px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.header-link:hover {
+  background-color: #6A994E;
+  color: white;
+}
+
+.user {
+  color: white;
+  font-weight: 500;
+  padding: 8px 15px;
+  border-radius: 6px;
+}
+
+.header-link i {
+  color: #A7C957;
+}
+
+.logout-button {
+  color: #386641;
+  background-color: #A7C957;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  margin-left: 10px;
+  text-decoration: none;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  transform: translateY(-3px);
+  background-color: #F2E8CF;
+  color: #386641;
 }
 </style>

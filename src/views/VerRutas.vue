@@ -4,7 +4,6 @@ import router from '@/router';
 
 import Footer from '../components/Footer.vue'
 import Header from '../components/Header.vue'
-import NavBar from '@/components/NavBar.vue';
 import RouteCard from '@/components/RouteCard.vue';
 
 onMounted(async () => {

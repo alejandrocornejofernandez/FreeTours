@@ -1,10 +1,19 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 
+// variable y función para la retroalimentación
+const mensajeSuccess = ref('');
+function mensajeSuccessReset() {
+    mensajeSuccess.value = "";
+}
+
+
 onMounted(async () => {
     getRoutes()
 })
 
+
+// función para cargar todas las rutas
 const rutas = ref([]);
 async function getRoutes() {
     try {
@@ -23,7 +32,7 @@ async function getRoutes() {
 // función para borrar una ruta
 async function deleteRuta(id) {
     try {
-        const peticion = await fetch(`http://localhost/api.php/rutas?id=${id}`, {
+        const peticion = await fetch(`http://localhost:8000/api.php/rutas?id=${id}`, {
             method: 'DELETE',
         })
 
@@ -37,7 +46,18 @@ async function deleteRuta(id) {
     }
 }
 
-// función para obtener los guias disponibles para la fecha de la ruta
+// variables y función para editar los guias asignados a las rutas
+const editGuiaID = ref(null);
+const guiaAsignado = ref(null);
+
+// función para editar el guia asignado
+function editGuiaAsignado(id, idGuiaAsignado) {
+    // activamos el modo edición al pulsar el botón
+    editGuiaID.value = id;
+    guiaAsignado.value = idGuiaAsignado;
+}
+
+// función para obtener los guias disponibles para la fecha de la ruta, se ejecuta cuando hacemos focus en el select.
 const guiasDisponibles = ref([]);
 async function obtenerGuias(fechaRuta) {
     try {
@@ -49,30 +69,14 @@ async function obtenerGuias(fechaRuta) {
         const respuesta = await peticion.json();
         guiasDisponibles.value = respuesta;
         console.log(guiasDisponibles.value);
-        console.log(fecha.value);
 
     } catch {
         console.log("Fecha no válida")
     }
 }
 
-// variables y función para editar los guias asignados a las rutas
-const editGuiaID = ref(null);
-const guiaAsignado = ref(null);
-
-// función para editar el guia asignado
-function editGuiaAsignado(id, nombreGuia) {
-    // activamos el modo edición al pulsar el botón
-    editGuiaID.value = id;
-    guiaAsignado.value = nombreGuia;
-}
-
-function cancelEdit() {
-    editGuiaID.value = null;
-}
-
-// función para actualizar el rol del usuario
-async function asignarGuia(id, rol) {
+// función para actualizar el guia de la ruta.
+async function asignarGuia(id_ruta, id_guia) {
 
     const asignacionData = {
         ruta_id: id_ruta, // ID de la ruta
@@ -80,7 +84,7 @@ async function asignarGuia(id, rol) {
     };
 
     try {
-        const peticion = await fetch('http://localhost/api.php/asignaciones', {
+        const peticion = await fetch('http://localhost:8000/api.php/asignaciones', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -89,14 +93,20 @@ async function asignarGuia(id, rol) {
         })
 
         const respuesta = await peticion.json();
-        // llamamos de nuevo al metodo getUsers() para actualizar la tabla
+
+        // llamamos de nuevo al metodo getRoutes() para actualizar la tabla
         getRoutes();
-        mensajeSuccess.value = respuesta.message + ` (ID: ${id})`;
+        mensajeSuccess.value = `El guia (ID: ${id_guia}) ha sido asignado correctamente en la ruta (ID : ${id_ruta})`;
         editGuiaID.value = null;
 
     } catch {
         console.log("error")
     }
+}
+
+// función para el botón de cancelar la asignación de guía
+function cancelEdit() {
+    editGuiaID.value = null;
 }
 
 </script>
@@ -105,7 +115,6 @@ async function asignarGuia(id, rol) {
     <div class="container-fluid py-4">
         <div class="row justify-content-center">
             <div class="col-12 col-xl-10">
-
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="h4 mb-0 text-secondary text-uppercase">Gestión de rutas</h2>
                 </div>
@@ -163,10 +172,11 @@ async function asignarGuia(id, rol) {
                                     <td v-if="editGuiaID == ruta.id">
                                         <div class="input-group input-group-sm">
                                             <select v-model="guiaAsignado" class="form-select border-primary"
-                                                @click="obtenerGuias(ruta.fecha)">
-                                                <option v-for="guia in guiasDisponibles">{{ guia.nombre }}</option>
+                                                value="guiaAsignado" @focus="obtenerGuias(ruta.fecha)">
+                                                <option v-for="guia in guiasDisponibles" :value="guia.id">{{ guia.nombre
+                                                    }} (ID: {{ guia.id }})</option>
                                             </select>
-                                            <button @click="asignarGuia(ruta.id, ruta.guia_id)"
+                                            <button @click="asignarGuia(ruta.id, guiaAsignado)"
                                                 class="btn btn-outline-success">
                                                 <i class="bi bi-check-lg"></i>
                                             </button>
@@ -183,12 +193,14 @@ async function asignarGuia(id, rol) {
                                     </td>
 
                                     <td>
-                                        <div class="fw-medium">{{ ruta.asistentes }}</div>
+
+                                        <div class="fw-medium"><i class="bi bi-exclamation-triangle-fill m-1"
+                                                v-if="ruta.asistentes < 10"></i>{{ ruta.asistentes }}</div>
                                     </td>
 
                                     <td class="text-end pe-4">
                                         <div class="btn-group shadow-sm">
-                                            <button @click="editGuiaAsignado(ruta.id, ruta.guia_nombre)"
+                                            <button @click="editGuiaAsignado(ruta.id, ruta.guia_id)"
                                                 class="btn btn-white btn-sm text-primary border"
                                                 title="Asignar o modificar guía">
                                                 <i class="bi bi-pencil-square"></i>

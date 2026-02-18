@@ -2,7 +2,6 @@
 import Header from './components/Header.vue'
 import Footer from './components/Footer.vue'
 import { ref } from 'vue';
-import NavBar from './components/NavBar.vue';
 
 // variables de sesión
 const sesion = localStorage.getItem('session');
@@ -14,9 +13,9 @@ if (sesion) user.value = JSON.parse(sesion);
 </script>
 
 <template>
-  <Header :sesion="user.value"></Header>
-  <NavBar></NavBar>
+  <Header :sesion="user"></Header>
   <RouterView></RouterView>
+  <Footer></Footer>
 </template>
 
 <style scoped></style>
