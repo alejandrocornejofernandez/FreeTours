@@ -45,29 +45,6 @@ const searchLocation = async () => {
     }
 };
 
-/*const isDragging = ref(false); // Estado para saber si hay un archivo encima
-const uploadedFiles = ref([]); // Lista donde guardaremos los archivos
-
-// 1. Cuando sueltan los archivos en la zona
-const handleDrop = (event) => {
-    isDragging.value = false;
-    const files = event.dataTransfer.files; // Captura los archivos del evento "drop"
-    processFiles(files);
-};
-
-// 2. Cuando seleccionan archivos haciendo clic
-const handleFileSelect = (event) => {
-    const files = event.target.files; // Captura los archivos del input
-    processFiles(files);
-};
-
-// 3. Función común para guardar los archivos en nuestro array
-const processFiles = (fileList) => {
-    // Convertimos el objeto FileList a un Array real de JS
-    const newFiles = Array.from(fileList);
-    uploadedFiles.value.push(...newFiles);
-};*/
-
 // La idea es realizar un formulario 'multistep' que hace que tenga más usabilidad al reducir la carga visual de los campos.
 const currentStep = ref(1);
 
@@ -119,25 +96,27 @@ const longitud = ref('');
 const guia_id = ref('');
 
 async function crearRuta() {
-    const rutaData = {
-        titulo: titulo.value,
-        localidad: localidad.value,
-        descripcion: descripcion.value,
-        foto: foto.value,
-        fecha: fecha.value,
-        hora: hora.value,
-        latitud: latitud.value,
-        longitud: longitud.value,
-        guia_id: guia_id.value
-    }
+
+    // para enviar la imagen tengo que usar FormData en lugar de un objeto JSON normal
+    let formData = new FormData();
+
+    formData.append('titulo', titulo.value);
+    formData.append('localidad', localidad.value);
+    formData.append('descripcion', descripcion.value);
+    formData.append('fecha', titulo.value);
+    formData.append('hora', titulo.value);
+    formData.append('latitud', titulo.value);
+    formData.append('longitud', titulo.value);
+    formData.append('guia_id', titulo.value);
+    
+    // para añadir la foto
+    formData.append('foto', foto.value);
 
     try {
         const peticion = await fetch('http://localhost:8000/api.php/rutas', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(rutaData)
+            // enviamos el formData
+            body: formData
         })
 
         const respuesta = await peticion.json();
@@ -232,6 +211,11 @@ function seleccionarGuia(id) {
                             <textarea class="form-control" rows="3" placeholder="Descripción de la ruta"
                                 v-model="descripcion"></textarea>
                         </div>
+
+                        <!-- este div va a contener la parte del 'drag and drop' para subir la imagen de la ruta -->
+                         <div>
+                            <input type="file" :value="foto">
+                         </div>
                     </div>
 
                     <!-- Paso 2: Fecha y hora -->
@@ -314,13 +298,14 @@ function seleccionarGuia(id) {
                         </button>
 
 
-                        <!-- Botón siguiente-->
+                        <!-- Botón siguiente, en este botón estoy usando :disabled con la variable computed para habilitar el botón solo cuando
+                         los campos del formulario esten rellenos. -->
                         <button v-if="currentStep < 4" class="btn btn-forest rounded-pill px-5 fw-bold text-uppercase"
                             :disabled="!pasoValido" @click="avanzar">
                             Siguiente<i class="bi bi-arrow-right ms-2"></i>
                         </button>
 
-                        <!-- Bottón para crear la ruta -->
+                        <!-- Botón para crear la ruta -->
                         <button v-if="currentStep == 4"
                             class="btn btn-brick rounded-pill px-5 fw-bold shadow text-uppercase" @click="crearRuta">
                             Crear ruta
