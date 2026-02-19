@@ -1,12 +1,8 @@
 <script setup>
 import { ref } from 'vue';
-import router from '@/router';
+import { useRouter } from 'vue-router';
 
-import Footer from '../components/Footer.vue'
-import Header from '../components/Header.vue'
-
-const emits = defineEmits(["login"])
-
+const router = useRouter();
 const email = ref("");
 const password = ref("");
 const errorMessage = ref("");
@@ -18,22 +14,21 @@ async function login() {
   }
 
   try {
-    const peticion = await fetch("http://localhost:8000/api.php/usuarios?login",
-      {
-        method: "POST",
-        headers: { 'Content-type': 'application/json; charset=UTF-8' },
-        body: JSON.stringify(data)
-      }
-    )
+    const peticion = await fetch("http://localhost:8000/api.php/usuarios?login", {
+      method: "POST",
+      headers: { 'Content-type': 'application/json; charset=UTF-8' },
+      body: JSON.stringify(data)
+    });
 
     const respuesta = await peticion.json();
 
     if (respuesta.status == "success") {
-      // creamos la sesión en localStorage
       const sesion = {
         nombre: respuesta.user.nombre,
         rol: respuesta.user.rol
       }
+
+      // si el login es correcto, creamos la sesion en el localStorage
       localStorage.setItem('session', JSON.stringify(sesion));
 
       // mostramos la vista Home
@@ -43,59 +38,64 @@ async function login() {
       errorMessage.value = "El email o la contraseña son incorrectos";
     }
 
-    console.log(respuesta);
-
   } catch {
-    console.log("Error en la petición")
+    errorMessage.value = "Error en la conexión con el servidor";
   }
 }
 </script>
 
 <template>
-  <div class="container mt-5">
-    <!-- Utilizo la clase card que sirve para la estructura de la imagen y el formulario -->
-    <div class="card shadow-lg border-0 rounded-4 overflow-hidden login-card">
-      <div class="row g-0">
-        <div class="col-lg-6 d-none d-lg-block">
-          <img src="/images/register-image.jpg" class="img-fluid h-100 w-100 object-fit-cover" alt="Registro" />
-        </div>
+  <div class="py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-5">
+          <div class="card shadow-lg border-0 rounded-4 overflow-hidden login-card">
+            <div class="card-body p-4 p-lg-5 bg-white">
 
-        <div class="col-lg-6 col-12 d-flex align-items-center bg-white">
-          <div class="card-body p-4 p-lg-5">
+              <div class="text-center mb-4">
+                <h2 class="fw-bold text-uppercase text-forest">Iniciar sesión</h2>
+                <p class="text-muted small">Inicia sesión en FreeTours</p>
 
-            <div class="text-center mb-4">
-              <h2 class="fw-bold text-uppercase">Iniciar sesión</h2>
-              <div v-if="errorMessage != ''" class="alert alert-danger">{{ errorMessage }}</div>
+                <div v-if="errorMessage != ''" class="alert alert-custom-danger mt-3">
+                  <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                  {{ errorMessage }}
+                </div>
+              </div>
+
+              <form @submit.prevent="login()">
+                <div class="mb-3 input-group custom-input-group">
+                  <span class="input-group-text border-end-0 bg-cream">
+                    <i class="bi bi-person-fill text-forest"></i>
+                  </span>
+                  <input class="form-control border-start-0 border-end-0" v-model.trim="email" type="email"
+                    placeholder="Email" required />
+                </div>
+
+                <div class="mb-3 input-group custom-input-group">
+                  <span class="input-group-text bg-cream border-end-0">
+                    <i class="bi bi-key-fill text-forest"></i>
+                  </span>
+                  <input class="form-control border-start-0 border-end-0" :class="passwordInput" v-model.trim="password"
+                    type="password" placeholder="Contraseña" />
+                  <span class="input-group-text bg-white border-start-0">
+                    <i class="bi bi-check-circle-fill text-lime" v-if="passwordInput == 'valid-input'"></i>
+                  </span>
+                </div>
+
+                <div class="d-grid mb-3">
+                  <button type="submit" class="btn btn-forest btn-lg rounded-pill fw-bold shadow-sm text-uppercase">
+                    Entrar
+                  </button>
+                </div>
+
+                <div class="text-center">
+                  <p class="mb-0 text-muted small">¿Aún no tienes cuenta?</p>
+                  <RouterLink to="/register" class="register-link fw-bold text-decoration-none">
+                    Registrate aquí
+                  </RouterLink>
+                </div>
+              </form>
             </div>
-
-            <form>
-              <div class="mb-3 input-group">
-                <span class="input-group-text border-end-0 icon-bg">
-                  <i class="bi bi-person-fill"></i>
-                </span>
-                <input class="form-control border-start-0" v-model.trim="email" type="text" placeholder="Email" />
-              </div>
-
-              <div class="mb-3 input-group">
-                <span class="input-group-text border-end-0 icon-bg">
-                  <i class="bi bi-key-fill"></i>
-                </span>
-                <input class="form-control border-start-0" v-model.trim="password" type="password"
-                  placeholder="Contraseña" />
-              </div>
-
-              <div class="d-grid mb-4">
-                <button class="btn btn-primary btn-lg rounded-pill fw-bold" type="submit" @click.prevent="login()">
-                  Entrar
-                </button>
-              </div>
-
-              <div class="text-center">
-                <p class="mb-0 text-muted-custom small">¿Aún no tienes cuenta?</p>
-                <RouterLink to="/register" class="register-link fw-bold text-decoration-none">Regístrate</RouterLink>
-              </div>
-            </form>
-
           </div>
         </div>
       </div>
@@ -103,4 +103,53 @@ async function login() {
   </div>
 </template>
 
-<style></style>
+<style scoped>
+/* color para el texto */
+.text-forest {
+  color: #386641;
+}
+
+/* color para el texto */
+.text-lime {
+  color: #6A994E;
+}
+
+/* card con color personalizado */
+.login-card {
+  border-top: 5px solid #386641;
+}
+
+/* inputs */
+.bg-cream {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+/* color de los iconos */
+.custom-input-group .form-control:focus {
+  border-color: #A7C957;
+  box-shadow: 0 0 0 0.25rem rgba(167, 201, 87, 0.15);
+}
+
+/* botón 'Entrar' */
+.btn-forest {
+  background-color: #386641;
+  color: white;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-forest:hover {
+  background-color: #6A994E;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.register-link {
+  color: #BC4749;
+}
+
+.register-link:hover {
+  color: #386641;
+}
+</style>

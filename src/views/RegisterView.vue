@@ -1,8 +1,5 @@
 <script setup>
 import { computed, ref } from 'vue'
-
-import Footer from '../components/Footer.vue'
-import Header from '../components/Header.vue'
 import router from '@/router'
 
 // variables del registro
@@ -92,90 +89,143 @@ function validarRegistro() {
 </script>
 
 <template>
-  <div class="container mt-5">
-    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-      <div class="row g-0">
-        <div class="col-lg-6 d-none d-lg-block">
-          <img src="/images/register-image.jpg" class="img-fluid h-100 w-100 object-fit-cover" alt="Registro" />
-        </div>
+  <div class="py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-5">
+          <div class="card shadow-lg border-0 rounded-4 overflow-hidden register-card">
+            <div class="card-body p-4 p-lg-5 bg-white">
 
-        <div class="col-lg-6 col-12 d-flex align-items-center bg-white">
-          <div class="card-body p-4 p-lg-5 text-black">
+              <div class="text-center mb-4">
+                <h2 class="fw-bold text-uppercase text-forest">Regístrate</h2>
+                <p class="text-muted small">Crea tu cuenta en FreeTours</p>
+              </div>
 
-            <div class="text-center mb-4">
-              <h2 class="fw-bold text-primary text-uppercase">Regístrate</h2>
+              <form @submit.prevent="validarRegistro()">
+                <div class="mb-3 input-group custom-input-group">
+                  <span class="input-group-text border-end-0 bg-cream">
+                    <i class="bi bi-person-fill text-forest"></i>
+                  </span>
+                  <input class="form-control border-start-0 border-end-0" :class="nameInput" v-model.trim="name"
+                    type="text" placeholder="Nombre" />
+                  <span class="input-group-text bg-white border-start-0">
+                    <i class="bi bi-check-circle-fill text-lime" v-if="nameInput == 'valid-input'"></i>
+                  </span>
+                </div>
+
+                <div class="mb-3 input-group custom-input-group">
+                  <span class="input-group-text bg-cream border-end-0">
+                    <i class="bi bi-envelope-fill text-forest"></i>
+                  </span>
+                  <input class="form-control border-start-0 border-end-0" :class="emailInput" v-model.trim="email"
+                    type="text" placeholder="Email" />
+                  <span class="input-group-text bg-white border-start-0">
+                    <i class="bi bi-check-circle-fill text-lime" v-if="emailInput == 'valid-input'"></i>
+                  </span>
+                </div>
+
+                <div class="mb-3 input-group custom-input-group">
+                  <span class="input-group-text bg-cream border-end-0">
+                    <i class="bi bi-key-fill text-forest"></i>
+                  </span>
+                  <input class="form-control border-start-0 border-end-0" :class="passwordInput" v-model.trim="password"
+                    type="password" placeholder="Contraseña" />
+                  <span class="input-group-text bg-white border-start-0">
+                    <i class="bi bi-check-circle-fill text-lime" v-if="passwordInput == 'valid-input'"></i>
+                  </span>
+                </div>
+
+                <div class="mb-4 input-group custom-input-group">
+                  <span class="input-group-text bg-cream border-end-0">
+                    <i class="bi bi-shield-lock-fill text-forest"></i>
+                  </span>
+                  <input class="form-control border-start-0 border-end-0" :class="confirmPasswordInput"
+                    v-model.trim="confirmPassword" type="password" placeholder="Repite la contraseña" />
+                  <span class="input-group-text bg-white border-start-0">
+                    <i class="bi bi-check-circle-fill text-lime" v-if="confirmPasswordInput == 'valid-input'"></i>
+                  </span>
+                </div>
+
+                <div class="d-grid mb-3">
+                  <button type="submit" class="btn btn-forest btn-lg rounded-pill fw-bold shadow-sm text-uppercase">
+                    Crea tu cuenta
+                  </button>
+                </div>
+
+                <div class="text-center">
+                  <p class="mb-0 text-muted small">¿Ya tienes cuenta?</p>
+                  <RouterLink to="/login" class="register-link fw-bold text-decoration-none">
+                    Inicia sesión aquí
+                  </RouterLink>
+                </div>
+              </form>
+
             </div>
-
-            <form>
-              <div class="mb-3 input-group">
-                <span class="input-group-text bg-light border-end-0">
-                  <i class="bi bi-person-fill text-primary"></i>
-                </span>
-                <input class="form-control border-start-0 border-end-0" :class="nameInput" v-model.trim="name"
-                  type="text" placeholder="Nombre" />
-                <span class="input-group-text bg-white border-start-0">
-                  <i class="bi bi-check text-success" v-if="nameInput == 'valid-input'"></i>
-                </span>
-              </div>
-
-              <div class="mb-3 input-group">
-                <span class="input-group-text bg-light border-end-0">
-                  <i class="bi bi-envelope-fill text-primary"></i>
-                </span>
-                <input class="form-control border-start-0 border-end-0" :class="emailInput" v-model.trim="email"
-                  type="text" placeholder="Email" />
-                <span class="input-group-text bg-white border-start-0">
-                  <i class="bi bi-check text-success" v-if="emailInput == 'valid-input'"></i>
-                </span>
-              </div>
-
-              <div class="mb-3 input-group">
-                <span class="input-group-text bg-light border-end-0">
-                  <i class="bi bi-key-fill text-primary"></i>
-                </span>
-                <input class="form-control border-start-0 border-end-0" :class="passwordInput" v-model.trim="password"
-                  type="password" placeholder="Contraseña" />
-                <span class="input-group-text bg-white border-start-0">
-                  <i class="bi bi-check text-success" v-if="passwordInput == 'valid-input'"></i>
-                </span>
-              </div>
-
-              <div class="mb-4 input-group">
-                <span class="input-group-text bg-light border-end-0">
-                  <i class="bi bi-key-fill text-primary"></i>
-                </span>
-                <input class="form-control border-start-0 border-end-0" :class="confirmPasswordInput"
-                  v-model.trim="confirmPassword" type="password" placeholder="Repite la contraseña" />
-                <span class="input-group-text bg-white border-start-0">
-                  <i class="bi bi-check text-success" v-if="confirmPasswordInput == 'valid-input'"></i>
-                </span>
-              </div>
-
-              <div class="d-grid mb-3">
-                <input type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold" value="Crea tu cuenta"
-                  @click.prevent="validarRegistro()" />
-              </div>
-
-              <div class="text-center">
-                <p class="mb-0 text-muted">¿Ya tienes cuenta?</p>
-                <RouterLink to="/login" class="text-primary fw-bold text-decoration-none">
-                  Inicia sesión aquí
-                </RouterLink>
-              </div>
-            </form>
-
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-<style>
+
+<style scoped>
+/* color para el texto */
+.text-forest {
+  color: #386641;
+}
+
+/* color para el texto */
+.text-lime {
+  color: #6A994E;
+}
+
+/* card con color personalizado */
+.register-card {
+  border-top: 5px solid #386641;
+}
+
+/* inputs */
+.bg-cream {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+/* color de los iconos */
+.custom-input-group .form-control:focus {
+  border-color: #A7C957;
+  box-shadow: 0 0 0 0.25rem rgba(167, 201, 87, 0.15);
+}
+
+/* clases para validar si los campos son correctos o incorrectos */
 .valid-input {
-  background-color: #d4edda;
+  background-color: rgba(167, 201, 87, 0.08) !important;
+  border-color: #A7C957 !important;
 }
 
 .error-input {
-  background-color: #f8d7da;
+  background-color: rgba(188, 71, 73, 0.08) !important;
+  border-color: #BC4749 !important;
+}
+
+/* botón 'Crea tu cuenta' */
+.btn-forest {
+  background-color: #386641;
+  color: white;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-forest:hover {
+  background-color: #6A994E;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.register-link {
+  color: #BC4749;
+}
+
+.register-link:hover {
+  color: #386641;
 }
 </style>

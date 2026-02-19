@@ -2,14 +2,14 @@
 import { RouterLink } from 'vue-router';
 
 const props = defineProps({
-  sesion: Object
+  sesion: String
 })
 
 const emits = defineEmits(["cerrarSesion"]);
 
 // función para cerrar la sesión
 function cerrarSesion() {
-
+  emits('cerrarSesion')
 }
 
 console.log(props.sesion)
@@ -51,7 +51,7 @@ console.log(props.sesion)
           <RouterLink to="/login" class="header-link" v-if="sesion == null">Iniciar sesión</RouterLink>
           <div v-else>
             <span class="user">Bienvenido, {{ sesion.nombre }}</span>
-            <button class="logout-button"><i class="bi bi-box-arrow-right"></i></button>
+            <button class="logout-button" @click="cerrarSesion"><i class="bi bi-box-arrow-right"></i></button>
           </div>
         </div>
 
