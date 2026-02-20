@@ -8,7 +8,9 @@ const sesion = localStorage.getItem('session');
 const user = ref('')
 
 // si existe sesion en localStorage asignamos los datos a la variable user
-if (sesion) user.value = JSON.parse(sesion);
+function login() {
+  if (sesion) user.value = JSON.parse(sesion);
+}
 
 // función para cerrar sesión, emit del componente Header.vue
 function logout() {
@@ -16,11 +18,13 @@ function logout() {
   localStorage.removeItem('session');
 }
 
+
+
 </script>
 
 <template>
   <Header :sesion="user" @cerrar-sesion="logout"></Header>
-  <RouterView></RouterView>
+  <RouterView @login="login"></RouterView>
   <Footer></Footer>
 </template>
 

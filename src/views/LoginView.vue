@@ -7,6 +7,8 @@ const email = ref("");
 const password = ref("");
 const errorMessage = ref("");
 
+const emits = defineEmits(["iniciarSesion"]);
+
 async function login() {
   const data = {
     email: email.value,
@@ -30,6 +32,7 @@ async function login() {
 
       // si el login es correcto, creamos la sesion en el localStorage
       localStorage.setItem('session', JSON.stringify(sesion));
+      emits('iniciarSesion')
 
       // mostramos la vista Home
       router.push("/");

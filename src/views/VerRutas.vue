@@ -77,7 +77,7 @@ async function getRoutesFechaLocalidad() {
         <div class="row">
             <div v-for="ruta in rutas">
                 <RouteCard :id="ruta.id" :titulo="ruta.titulo" :localidad="ruta.localidad"
-                    :descripcion="ruta.descripcion">
+                    :descripcion="ruta.descripcion" :foto="ruta.foto">
                 </RouteCard>
             </div>
         </div>

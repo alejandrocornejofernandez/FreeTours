@@ -45,7 +45,9 @@ onMounted(async () => {
 
 <template>
   <div>
-    <div class="hero-ruta shadow-sm py-5 mb-5">
+    <div class="hero-ruta shadow-sm py-5 mb-5" :style="{
+      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('http://localhost:8000/images/${ruta.foto}')`
+    }">
       <div class="container text-center">
         <h1 class="display-4 fw-bold text-uppercase mb-2 text-white">{{ ruta.titulo }}</h1>
         <div class="d-flex justify-content-center align-items-center">
@@ -75,50 +77,47 @@ onMounted(async () => {
           <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
 
             <div class="card-header bg-forest text-white py-3">
-                <h5 class="m-0 fw-bold text-center text-uppercase">
-                    <i class="bi bi-info-circle me-2"></i>Información
-                </h5>
+              <h5 class="m-0 fw-bold text-center text-uppercase">
+                <i class="bi bi-info-circle me-2"></i>Información
+              </h5>
             </div>
 
             <div class="card-body p-0">
-                <div class="info-item mb-4">
-                    <label class="text-muted small text-uppercase fw-bold d-block mb-1 mt-3 text-center">Descripción</label>
-                    <p class="text-secondary text-center">{{ ruta.descripcion }}</p>
-                </div>
-
-                <div class="row g-3 mb-4">
-              <div class="col-6">
-                <div class="p-3 rounded-3 bg-cream-light border-4 m-3">
-                  <label class="text-muted small d-block">Fecha</label>
-                  <span class="fw-bold text-forest"
-                    ><i class="bi bi-calendar3 me-2"></i>{{ ruta.fecha }}</span
-                  >
-                </div>
+              <div class="info-item mb-4">
+                <label class="text-muted small text-uppercase fw-bold d-block mb-1 mt-3 text-center">Descripción</label>
+                <p class="text-secondary text-center m-3">{{ ruta.descripcion }}</p>
               </div>
 
-              <div class="col-6">
-                <div class="p-3 rounded-3 bg-cream-light border-4 m-3">
-                  <label class="text-muted small d-block">Hora</label>
-                  <span class="fw-bold text-forest"
-                    ><i class="bi bi-clock me-2"></i>{{ ruta.hora }}</span>
+              <div class="row g-3 mb-4">
+                <div class="col-6">
+                  <div class="p-3 rounded-3 bg-cream-light border-4 m-3">
+                    <label class="text-muted small d-block">Fecha</label>
+                    <span class="fw-bold text-forest"><i class="bi bi-calendar3 me-2"></i>{{ ruta.fecha }}</span>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="p-3 rounded-3 bg-cream-light border-4 m-3">
+                    <label class="text-muted small d-block">Hora</label>
+                    <span class="fw-bold text-forest"><i class="bi bi-clock me-2"></i>{{ ruta.hora }}</span>
+                  </div>
                 </div>
               </div>
-            </div>
             </div>
 
             <div class="card-header bg-forest text-white py-3">
-                <h5 class="m-0 fw-bold text-center text-uppercase">
-                    <i class="bi bi-bookmark-fill me-2"></i>Reserva
-                </h5>
+              <h5 class="m-0 fw-bold text-center text-uppercase">
+                <i class="bi bi-bookmark-fill me-2"></i>Reserva
+              </h5>
             </div>
 
             <div class="card-body p-0">
-                <div class="info-item mb-4">
-                    
-                </div>
+              <div class="info-item mb-4">
+
+              </div>
             </div>
 
-            
+
           </div>
         </div>
       </div>
@@ -129,9 +128,6 @@ onMounted(async () => {
 <style scoped>
 .hero-ruta {
   background-color: #386641;
-  background-image:
-    linear-gradient(rgba(56, 102, 65, 0.8), rgba(56, 102, 65, 0.9)),
-    url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=1500');
   background-size: cover;
   background-position: center;
 }
@@ -159,5 +155,4 @@ onMounted(async () => {
 .bg-cream-light {
   background-color: rgba(242, 232, 207, 0.5);
 }
-
 </style>

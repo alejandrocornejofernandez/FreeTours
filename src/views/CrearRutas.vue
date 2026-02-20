@@ -95,6 +95,11 @@ const latitud = ref('');
 const longitud = ref('');
 const guia_id = ref('');
 
+function clickImagen(e) {
+    foto.value = e.target.files[0];
+    console.log(foto.value);
+}
+
 async function crearRuta() {
 
     // para enviar la imagen tengo que usar FormData en lugar de un objeto JSON normal
@@ -103,12 +108,12 @@ async function crearRuta() {
     formData.append('titulo', titulo.value);
     formData.append('localidad', localidad.value);
     formData.append('descripcion', descripcion.value);
-    formData.append('fecha', titulo.value);
-    formData.append('hora', titulo.value);
-    formData.append('latitud', titulo.value);
-    formData.append('longitud', titulo.value);
-    formData.append('guia_id', titulo.value);
-    
+    formData.append('fecha', fecha.value);
+    formData.append('hora', hora.value);
+    formData.append('latitud', latitud.value);
+    formData.append('longitud', longitud.value);
+    formData.append('guia_id', guia_id.value);
+
     // para añadir la foto
     formData.append('foto', foto.value);
 
@@ -193,124 +198,136 @@ function seleccionarGuia(id) {
                 <div class="row">
 
                     <!-- Paso 1: Información general de la ruta (Titulo, localidad, descripción e imagen) -->
-                    <div class="col-12" v-if="currentStep == 1">
-                        <h5 class="section-title mb-4 text-uppercase"><i
-                                class="bi bi-info-circle-fill me-2"></i>Información general</h5>
-                        <div class="mb-4 input-group custom-group">
-                            <span class="input-group-text"><i class="bi bi-pencil-square"></i></span>
-                            <input class="form-control" type="text" placeholder="Título de la ruta" v-model="titulo" />
-                        </div>
-
-                        <div class="mb-4 input-group custom-group">
-                            <span class="input-group-text"><i class="bi bi-geo-alt-fill"></i></span>
-                            <input class="form-control" type="text" placeholder="Localidad" v-model="localidad" />
-                        </div>
-
-                        <div class="mb-4 input-group custom-group">
-                            <span class="input-group-text"><i class="bi bi-card-text"></i></span>
-                            <textarea class="form-control" rows="3" placeholder="Descripción de la ruta"
-                                v-model="descripcion"></textarea>
-                        </div>
-
-                        <!-- este div va a contener la parte del 'drag and drop' para subir la imagen de la ruta -->
-                         <div>
-                            <input type="file" :value="foto">
-                         </div>
-                    </div>
-
-                    <!-- Paso 2: Fecha y hora -->
-                    <div class="col-12" v-if="currentStep == 2">
-                        <h5 class="section-title mb-4 text-uppercase"><i
-                                class="bi bi-calendar-event-fill me-2"></i>¿Cuándo será?</h5>
-                        <div class="date-picker-wrapper mx-auto">
-                            <input type="date" class="form-control form-control-lg custom-date-input" v-model="fecha">
-                        </div>
-                        <p class="mt-3 text-muted text-center">Selecciona la fecha prevista para el inicio de la ruta.
-                        </p>
-
-                        <div class="date-picker-wrapper mx-auto">
-                            <input type="time" class="form-control form-control-lg custom-date-input" v-model="hora">
-                        </div>
-                        <p class="mt-3 text-muted text-center">Selecciona la hora prevista para el inicio de la ruta.
-                        </p>
-                    </div>
-
-                    <!-- Paso 3: Ubicación -->
-                    <div class="col-12" v-show="currentStep == 3">
-                        <h5 class="section-title mb-4 text-uppercase"><i class="bi bi-map-fill me-2"></i>Ubicación</h5>
-                        <div class="input-group custom-group mb-3">
-                            <input v-model="address" @keyup.enter="searchLocation" placeholder="Introduce una dirección"
-                                class="form-control" />
-                            <button class="btn btn-lime-accent" @click="searchLocation"><i
-                                    class="bi bi-search"></i></button>
-                        </div>
-
-                        <div id="map" class="rounded-3 shadow-sm mb-3 border"></div>
-
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <div class="small-label">Latitud</div>
-                                <input class="form-control form-control-sm bg-light" v-model="latitud" disabled />
+                    <form @submit.prevent="crearRuta" enctype="multipart/form-data">
+                        <div class="col-12" v-if="currentStep == 1">
+                            <h5 class="section-title mb-4 text-uppercase"><i
+                                    class="bi bi-info-circle-fill me-2"></i>Información general</h5>
+                            <div class="mb-4 input-group custom-group">
+                                <span class="input-group-text"><i class="bi bi-pencil-square"></i></span>
+                                <input class="form-control" type="text" placeholder="Título de la ruta"
+                                    v-model="titulo" />
                             </div>
-                            <div class="col-6">
-                                <div class="small-label">Longitud</div>
-                                <input class="form-control form-control-sm bg-light" v-model="longitud" disabled />
+
+                            <div class="mb-4 input-group custom-group">
+                                <span class="input-group-text"><i class="bi bi-geo-alt-fill"></i></span>
+                                <input class="form-control" type="text" placeholder="Localidad" v-model="localidad" />
+                            </div>
+
+                            <div class="mb-4 input-group custom-group">
+                                <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+                                <textarea class="form-control" rows="3" placeholder="Descripción de la ruta"
+                                    v-model="descripcion"></textarea>
+                            </div>
+
+                            <!-- este div va a contener la parte del 'drag and drop' para subir la imagen de la ruta -->
+                            <div>
+                                <input type="file" @change="clickImagen" name="foto"
+                                    accept="image/x-png, image/jpeg, image/jpg">
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Paso 4: Asignar guía -->
-                    <div class="col-12" v-if="currentStep == 4">
-                        <h5 class="section-title mb-4 text-uppercase"><i
-                                class="bi bi-person-badge-fill me-2"></i>Asignar guía</h5>
-                        <p class="small mb-0">Este paso es opcional. Puedes dejarlo vacío.</p>
-                        <div class="table-responsive rounded-3 border">
-                            <table class="table table-hover align-middle mb-0 custom-table">
-                                <thead>
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Email</th>
-                                        <th class="text-center">Selección</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="guia in guiasDisponibles" :key="guia.id"
-                                        @click="seleccionarGuia(guia.id)"
-                                        :class="{ 'table-selected': guiaSeleccionadoID == guia.id }">
-                                        <td class="fw-bold text-forest">{{ guia.nombre }}</td>
-                                        <td class="text-muted">{{ guia.email }}</td>
-                                        <td class="text-center">
-                                            <div class="custom-radio"
-                                                :class="{ 'checked': guiaSeleccionadoID == guia.id }"></div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <!-- Paso 2: Fecha y hora -->
+                        <div class="col-12" v-if="currentStep == 2">
+                            <h5 class="section-title mb-4 text-uppercase"><i
+                                    class="bi bi-calendar-event-fill me-2"></i>¿Cuándo será?</h5>
+                            <div class="date-picker-wrapper mx-auto">
+                                <input type="date" class="form-control form-control-lg custom-date-input"
+                                    v-model="fecha">
+                            </div>
+                            <p class="mt-3 text-muted text-center">Selecciona la fecha prevista para el inicio de la
+                                ruta.
+                            </p>
+
+                            <div class="date-picker-wrapper mx-auto">
+                                <input type="time" class="form-control form-control-lg custom-date-input"
+                                    v-model="hora">
+                            </div>
+                            <p class="mt-3 text-muted text-center">Selecciona la hora prevista para el inicio de la
+                                ruta.
+                            </p>
                         </div>
-                    </div>
+
+                        <!-- Paso 3: Ubicación -->
+                        <div class="col-12" v-show="currentStep == 3">
+                            <h5 class="section-title mb-4 text-uppercase"><i class="bi bi-map-fill me-2"></i>Ubicación
+                            </h5>
+                            <div class="input-group custom-group mb-3">
+                                <input v-model="address" @keyup.enter="searchLocation"
+                                    placeholder="Introduce una dirección" class="form-control" />
+                                <button type="button" class="btn btn-lime-accent" @click="searchLocation"><i
+                                        class="bi bi-search"></i></button>
+                            </div>
+
+                            <div id="map" class="rounded-3 shadow-sm mb-3 border"></div>
+
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="small-label">Latitud</div>
+                                    <input class="form-control form-control-sm bg-light" v-model="latitud" disabled />
+                                </div>
+                                <div class="col-6">
+                                    <div class="small-label">Longitud</div>
+                                    <input class="form-control form-control-sm bg-light" v-model="longitud" disabled />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Paso 4: Asignar guía -->
+                        <div class="col-12" v-if="currentStep == 4">
+                            <h5 class="section-title mb-4 text-uppercase"><i
+                                    class="bi bi-person-badge-fill me-2"></i>Asignar guía</h5>
+                            <p class="small mb-0">Este paso es opcional. Puedes dejarlo vacío.</p>
+                            <div class="table-responsive rounded-3 border">
+                                <table class="table table-hover align-middle mb-0 custom-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Email</th>
+                                            <th class="text-center">Selección</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="guia in guiasDisponibles" :key="guia.id"
+                                            @click="seleccionarGuia(guia.id)"
+                                            :class="{ 'table-selected': guiaSeleccionadoID == guia.id }">
+                                            <td class="fw-bold text-forest">{{ guia.nombre }}</td>
+                                            <td class="text-muted">{{ guia.email }}</td>
+                                            <td class="text-center">
+                                                <div class="custom-radio"
+                                                    :class="{ 'checked': guiaSeleccionadoID == guia.id }"></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
 
-                    <div class="col-12 d-flex justify-content-between mt-5">
-                        <!-- Botón atrás-->
-                        <button v-if="currentStep > 1"
-                            class="btn btn-outline-forest rounded-pill px-4 fw-bold text-uppercase" @click="retroceder">
-                            <i class="bi bi-arrow-left me-2"></i>Atrás
-                        </button>
+
+                        <div class="col-12 d-flex justify-content-between mt-5">
+                            <!-- Botón atrás-->
+                            <button v-if="currentStep > 1" type="button"
+                                class="btn btn-outline-forest rounded-pill px-4 fw-bold text-uppercase"
+                                @click="retroceder">
+                                <i class="bi bi-arrow-left me-2"></i>Atrás
+                            </button>
 
 
-                        <!-- Botón siguiente, en este botón estoy usando :disabled con la variable computed para habilitar el botón solo cuando
-                         los campos del formulario esten rellenos. -->
-                        <button v-if="currentStep < 4" class="btn btn-forest rounded-pill px-5 fw-bold text-uppercase"
-                            :disabled="!pasoValido" @click="avanzar">
-                            Siguiente<i class="bi bi-arrow-right ms-2"></i>
-                        </button>
+                            <!-- Botón siguiente, en este botón estoy usando :disabled con la variable computed para habilitar el botón solo cuando
+                            los campos del formulario esten rellenos. -->
+                            <button v-if="currentStep < 4" type="button"
+                                class="btn btn-forest rounded-pill px-5 fw-bold text-uppercase" :disabled="!pasoValido"
+                                @click="avanzar">
+                                Siguiente<i class="bi bi-arrow-right ms-2"></i>
+                            </button>
 
-                        <!-- Botón para crear la ruta -->
-                        <button v-if="currentStep == 4"
-                            class="btn btn-brick rounded-pill px-5 fw-bold shadow text-uppercase" @click="crearRuta">
-                            Crear ruta
-                        </button>
-                    </div>
+                            <!-- Botón para crear la ruta -->
+                            <button type="submit" v-if="currentStep == 4"
+                                class="btn btn-brick rounded-pill px-5 fw-bold shadow text-uppercase">
+                                Crear ruta
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
