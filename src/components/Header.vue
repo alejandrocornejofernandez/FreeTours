@@ -2,7 +2,7 @@
 import { RouterLink } from 'vue-router';
 
 const props = defineProps({
-  sesion: String,
+  sesion: Object,
   default: null
 })
 
@@ -49,7 +49,7 @@ console.log(props.sesion)
 
         <!-- COLUMNA INICIO SESIÓN-->
         <div class="col-4 align-self-center justify-content-end">
-          <RouterLink to="/login" class="header-link" v-if="sesion == ''">Iniciar sesión</RouterLink>
+          <RouterLink to="/login" class="header-link" v-if="!sesion">Iniciar sesión</RouterLink>
           <div v-else>
             <span class="user">Bienvenido, {{ sesion.nombre }}</span>
             <button class="logout-button" @click="cerrarSesion"><i class="bi bi-box-arrow-right"></i></button>

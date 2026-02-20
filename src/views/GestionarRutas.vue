@@ -171,8 +171,11 @@ function cancelEdit() {
 
                                     <td v-if="editGuiaID == ruta.id">
                                         <div class="input-group input-group-sm">
-                                            <select v-model="guiaAsignado" class="form-select border-primary"
-                                                value="guiaAsignado" @focus="obtenerGuias(ruta.fecha)">
+                                            <select class="form-select border-primary" v-model="guiaAsignado"
+                                                @focus="obtenerGuias(ruta.fecha)">
+                                                <option v-if="ruta.guia_nombre != null" :value="guiaAsignado">{{
+                                                    ruta.guia_nombre }}
+                                                </option>
                                                 <option v-for="guia in guiasDisponibles" :value="guia.id">{{ guia.nombre
                                                     }} (ID: {{ guia.id }})</option>
                                             </select>

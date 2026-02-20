@@ -7,7 +7,11 @@ const email = ref("");
 const password = ref("");
 const errorMessage = ref("");
 
-const emits = defineEmits(["iniciarSesion"]);
+const props = defineProps({
+  modalReserva: Boolean,
+})
+
+const emits = defineEmits(["login"]);
 
 async function login() {
   const data = {
@@ -32,10 +36,11 @@ async function login() {
 
       // si el login es correcto, creamos la sesion en el localStorage
       localStorage.setItem('session', JSON.stringify(sesion));
-      emits('iniciarSesion')
+      emits('login')
 
       // mostramos la vista Home
-      router.push("/");
+      if (!props.modalReserva) router.push("/");
+
 
     } else {
       errorMessage.value = "El email o la contraseña son incorrectos";
@@ -78,8 +83,8 @@ async function login() {
                   <span class="input-group-text bg-cream border-end-0">
                     <i class="bi bi-key-fill text-forest"></i>
                   </span>
-                  <input class="form-control border-start-0 border-end-0" :class="passwordInput" v-model.trim="password"
-                    type="password" placeholder="Contraseña" />
+                  <input class="form-control border-start-0 border-end-0" v-model.trim="password" type="password"
+                    placeholder="Contraseña" />
                   <span class="input-group-text bg-white border-start-0">
                     <i class="bi bi-check-circle-fill text-lime" v-if="passwordInput == 'valid-input'"></i>
                   </span>
