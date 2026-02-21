@@ -4,11 +4,16 @@ import { ref } from 'vue';
 
 
 const props = defineProps({
-    id: String,
+    id: Number,
     titulo: String,
     localidad: String,
     descripcion: String,
     foto: String,
+
+    // recibe un prop desde verRutasCliente.vue para saber que estamos en la sección de reservas
+    reservasCliente: Boolean,
+    // tambien recibimos el id de la reserva, para poder eliminarla
+    id_reserva: Number
 })
 
 function verDetalles() {
@@ -38,7 +43,22 @@ function verDetalles() {
 
         <div class="card-footer bg-white border-0 text-center pb-4">
             <span class="btn-detail-link">Ver detalles</span>
+
+            <!-- este div solo se muestra si estamos viendo la card desde la parte de reservas del cliente -->
+            <div v-if="props.reservasCliente">
+                <div class="mt-3 w-100 d-flex justify-content-center">
+                        <button 
+                            type="button" 
+                            class="btn btn-brick btn-sm rounded-pill px-4 fw-bold text-uppercase shadow-sm"
+                            @click="eliminarReserva()"
+                        >
+                            <i class="bi bi-trash3 me-2"></i>Eliminar reserva
+                        </button>
+                    </div>
+            </div>
         </div>
+
+
     </div>
 </template>
 
@@ -83,5 +103,19 @@ function verDetalles() {
     letter-spacing: 1px;
     border-bottom: 2px solid #A7C957;
     padding-bottom: 2px;
+}
+
+/* Estilo del botón eliminar (Rojo Ladrillo) */
+.btn-brick {
+    background-color: #BC4749;
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-brick:hover {
+    background-color: #a33b3d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(188, 71, 73, 0.3) !important;
 }
 </style>

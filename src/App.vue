@@ -2,6 +2,9 @@
 import Header from './components/Header.vue'
 import Footer from './components/Footer.vue'
 import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+
+const router = useRoute();
 
 // variables de sesión
 const user = ref('')
@@ -19,7 +22,9 @@ login();
 function logout() {
   user.value = null;
   localStorage.removeItem('session');
+  router.push("/");
 }
+
 </script>
 
 <template>

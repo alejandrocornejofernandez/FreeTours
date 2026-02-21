@@ -13,13 +13,12 @@ function cerrarSesion() {
   emits('cerrarSesion')
 }
 
-console.log(props.sesion)
 </script>
 
 <template>
   <header class="main-header shadow">
-    <div class="container-fluid d-inline-block align-items-center justify-content-between py-2">
-      <div class="row align-items-start">
+    <div class="container-fluid py-2">
+      <div class="row align-items-center">
 
         <!-- COLUMNA DEL NOMBRE DE LA WEB-->
         <div class="col-4">
@@ -29,18 +28,18 @@ console.log(props.sesion)
         </div>
 
         <!-- COLUMNA NAVBAR-->
-        <div class="col-4">
+        <div class="col-4 d-flex justify-content-center">
           <nav class="d-none d-md-flex gap-3">
 
             <RouterLink to="/" class="header-link">
               <i class="bi bi-house-door me-1"></i> Inicio
             </RouterLink>
 
-            <RouterLink to="/gestionUsuarios" class="header-link">
+            <RouterLink to="/gestionUsuarios" class="header-link" v-if="props.sesion && props.sesion.rol == 'admin'">
               <i class="bi bi-people me-1"></i>Gestión de usuarios
             </RouterLink>
 
-            <RouterLink to="/gestionRutas" class="header-link">
+            <RouterLink to="/gestionRutas" class="header-link" v-if="props.sesion">
               <i class="bi bi-map me-1"></i>Gestión de rutas
             </RouterLink>
 
@@ -48,10 +47,10 @@ console.log(props.sesion)
         </div>
 
         <!-- COLUMNA INICIO SESIÓN-->
-        <div class="col-4 align-self-center justify-content-end">
-          <RouterLink to="/login" class="header-link" v-if="!sesion">Iniciar sesión</RouterLink>
+        <div class="col-4 d-flex justify-content-end">
+          <RouterLink to="/login" class="header-link" v-if="!props.sesion">Iniciar sesión</RouterLink>
           <div v-else>
-            <span class="user">Bienvenido, {{ sesion.nombre }}</span>
+            <span class="user">Bienvenido, {{ props.sesion.nombre }}</span>
             <button class="logout-button" @click="cerrarSesion"><i class="bi bi-box-arrow-right"></i></button>
           </div>
         </div>

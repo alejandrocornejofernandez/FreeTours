@@ -31,7 +31,8 @@ async function login() {
     if (respuesta.status == "success") {
       const sesion = {
         nombre: respuesta.user.nombre,
-        rol: respuesta.user.rol
+        rol: respuesta.user.rol,
+        email: respuesta.user.email
       }
 
       // si el login es correcto, creamos la sesion en el localStorage

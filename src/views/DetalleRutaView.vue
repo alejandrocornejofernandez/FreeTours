@@ -7,7 +7,7 @@ import LoginView from './LoginView.vue'
 
 // necesitamos recibir la sesión para saber si el usuario puede reservar o no
 const props = defineProps({
-  sesion: String
+  sesion: Object
 })
 
 // AÑADIMOS los emits para poder avisar al padre (App.vue)
@@ -69,6 +69,37 @@ function cerrarModalLogin() {
   mostrarModalReserva.value = true;
   emits('login');
 }
+
+// función para realizar la reserva
+const numeroAsistentes = ref('');
+async function crearReserva() {
+
+  const dataReserva = {
+    email: props.sesion.email,
+    ruta_id: ruta.value.id,
+    num_personas: numeroAsistentes.value
+  }
+  try {
+  const peticion = await fetch("http://localhost:8000/api.php/reservas", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(dataReserva)
+  })
+
+  const respuesta = await peticion.json()
+  
+  if(respuesta.status == "success") {
+
+  }
+
+  } catch (error) {
+    console.error(error);
+  }
+
+}
+ 
 </script>
 
 <template>
@@ -172,25 +203,65 @@ function cerrarModalLogin() {
     </div>
   </div>
 
-  <!-- Modal usuario logueado -->
+  <div class="modal-backdrop fade show" v-if="mostrarModalLogin"></div>
+
   <div class="modal fade" v-if="mostrarModalReserva" :class="{ show: mostrarModalReserva }" style="display: block;"
-    tabindex="-1" aria-labelledby="modalReservaLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalReservaLabel">Reservar plaza</h5>
-          <button type="button" class="btn-close" @click="mostrarModalReserva = false"></button>
-        </div>
-        <div class="modal-body">
-          ¡Puedes reservar tu plaza en esta ruta ahora mismo!
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="mostrarModalReserva = false">Cerrar</button>
-          <button type="button" class="btn btn-primary">Reservar</button>
+  tabindex="-1" aria-labelledby="modalReservaLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+      
+      <div class="modal-header bg-forest text-white border-0 py-3">
+        <div class="w-100 text-center position-relative">
+          <h5 class="modal-title text-uppercase fw-bold m-0" id="modalReservaLabel">
+            <i class="bi bi-calendar-check me-2"></i>Finalizar Reserva
+          </h5>
+          <button type="button" class="btn-close btn-close-white position-absolute end-0 top-50 translate-middle-y" 
+            @click="mostrarModalReserva = false"></button>
         </div>
       </div>
+
+      <div class="modal-body p-4 p-lg-5">
+        <div class="text-center mb-4">
+          <p class="text-muted small mb-1">Estás reservando plaza para:</p>
+          <h5 class="text-forest fw-bold text-uppercase">{{ ruta.titulo }}</h5>
+        </div>
+
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <label class="form-label small fw-bold text-uppercase text-muted">Número de asistentes</label>
+            <div class="mb-4 input-group custom-input-group">
+              <span class="input-group-text border-end-0 bg-cream text-forest">
+                <i class="bi bi-person-plus-fill"></i>
+              </span>
+              <input class="form-control border-start-0" type="number" min="1" 
+                placeholder="¿Cuántos vendréis?" v-model="numeroAsistentes" />
+            </div>
+
+            <div class="p-3 rounded-3 bg-light border-start border-forest border-4">
+              <p class="mb-0 small text-muted">
+                <i class="bi bi-envelope-fill me-2 text-forest"></i>
+                La reserva se está llevando a cabo para: <span class="fw-bold text-dark">{{ props.sesion.email }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer border-0 d-flex justify-content-center pb-4 gap-3">
+        <button type="button" class="btn btn-outline-forest rounded-pill px-4 fw-bold text-uppercase" 
+          @click="mostrarModalReserva = false">
+          Cancelar
+        </button>
+        <button type="button" @click="crearReserva" class="btn btn-brick btn-lg rounded-pill px-5 fw-bold text-uppercase shadow-sm">
+          Confirmar reserva
+        </button>
+      </div>
+      
     </div>
   </div>
+</div>
+
+<div class="modal-backdrop fade show" v-if="mostrarModalReserva"></div>
 
 </template>
 
@@ -236,8 +307,30 @@ function cerrarModalLogin() {
   box-shadow: 0 5px 15px rgba(188, 71, 73, 0.4) !important;
 }
 
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(155, 109, 110, 0.4) !important;
+}
+
 .bg-cream-light {
   background-color: rgba(167, 201, 87, 0.15);
   border: 1px solid rgba(106, 153, 78, 0.2);
+}
+
+.custom-group .input-group-text {
+    background-color: #F2E8CF;
+    color: #386641;
+    border: 1px solid #ced4da;
+    border-right: none;
+}
+
+.custom-group .form-control {
+    border-left: none;
+    padding: 12px;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #6A994E;
 }
 </style>
