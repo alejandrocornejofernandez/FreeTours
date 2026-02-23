@@ -45,6 +45,11 @@ const router = createRouter({
       component: () => import('@/views/VerRutasCliente.vue'),
     },
     {
+      path: '/gestionRutas/verRutasGuia',
+      name: 'verRutasGuia',
+      component: () => import('@/views/VerRutasGuia.vue'),
+    },
+    {
       path: '/gestionRutas/gestionarRutas',
       name: 'gestionarRutas',
       component: () => import('@/views/GestionarRutas.vue'),

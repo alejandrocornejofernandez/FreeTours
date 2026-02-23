@@ -59,6 +59,9 @@ const props = defineProps({
                             <RouterLink to="/gestionRutas/verRutasCliente" class="btn btn-forest w-100 rounded-pill fw-bold text-uppercase shadow-sm mt-3" v-if="props.sesion && props.sesion.rol == 'cliente'">
                                 Ver listado
                             </RouterLink>
+                            <RouterLink to="/gestionRutas/verRutasGuia" class="btn btn-forest w-100 rounded-pill fw-bold text-uppercase shadow-sm mt-3" v-if="props.sesion && props.sesion.rol == 'guia'">
+                                Ver listado
+                            </RouterLink>
                         </div>
                     </div>
                 </div>
@@ -77,11 +80,10 @@ const props = defineProps({
 .divider {
     width: 60px;
     height: 4px;
-    background-color: #A7C957; /* Verde Lima */
+    background-color: #A7C957;
     border-radius: 2px;
 }
 
-/* Estilo de la Card */
 .admin-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border-top: 5px solid #386641 !important;
@@ -92,7 +94,6 @@ const props = defineProps({
     box-shadow: 0 15px 30px rgba(56, 102, 65, 0.15) !important;
 }
 
-/* Ajuste de imagen */
 .img-wrapper {
     height: 160px;
     overflow: hidden;
