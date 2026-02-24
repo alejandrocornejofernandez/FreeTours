@@ -4,7 +4,7 @@ import { ref } from 'vue';
 
 
 const props = defineProps({
-    id: Number,
+    id: String,
     titulo: String,
     localidad: String,
     descripcion: String,
