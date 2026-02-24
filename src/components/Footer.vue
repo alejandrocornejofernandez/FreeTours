@@ -29,10 +29,10 @@ const currentYear = new Date().getFullYear();
 
                 <div class="col-md-4 text-center text-md-end">
                     <div class="social-icons">
-                        <a href="facebook.com" class="social-link"><i class="bi bi-facebook"></i></a>
-                        <a href="instagram.com" class="social-link"><i class="bi bi-instagram"></i></a>
-                        <a href="x.com" class="social-link"><i class="bi bi-twitter-x"></i></a>
-                        <a href="youtube.com" class="social-link"><i class="bi bi-youtube"></i></a>
+                        <a href="https://www.facebook.com" class="social-link"><i class="bi bi-facebook"></i></a>
+                        <a href="https://www.instagram.com" class="social-link"><i class="bi bi-instagram"></i></a>
+                        <a href="https://www.x.com" class="social-link"><i class="bi bi-twitter-x"></i></a>
+                        <a href="https://www.youtube.com" class="social-link"><i class="bi bi-youtube"></i></a>
                     </div>
                 </div>
 

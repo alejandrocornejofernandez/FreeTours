@@ -2,9 +2,9 @@
 import Header from './components/Header.vue'
 import Footer from './components/Footer.vue'
 import { ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 
-const router = useRoute();
+const router = useRouter();
 
 // variables de sesión
 const user = ref('')
@@ -29,8 +29,12 @@ function logout() {
 
 <template>
   <Header :sesion="user" @cerrar-sesion="logout"></Header>
-  <RouterView @login="login" :sesion="user"></RouterView>
+  <RouterView @login="login" :sesion="user" class="router-view"></RouterView>
   <Footer></Footer>
 </template>
 
-<style scoped></style>
+<style scoped>
+.router-view {
+  height: 80vh;
+}
+</style>

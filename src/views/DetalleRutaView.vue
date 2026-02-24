@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -37,6 +37,7 @@ async function getRoute() {
 // dibujamos el mapa con las coordenadas de la ruta
 onMounted(async () => {
   await getRoute()
+  await getValoraciones()
 
   if (ruta.value) {
     map = L.map('map').setView([ruta.value.latitud, ruta.value.longitud], 14)
@@ -70,9 +71,18 @@ function cerrarModalLogin() {
   emits('login');
 }
 
+const mensajeSuccess = ref('');
+
 // función para realizar la reserva
 const numeroAsistentes = ref('');
+const mensajeError = ref('');
+
 async function crearReserva() {
+
+  if (numeroAsistentes.value == '') {
+    mensajeError.value = "Introduce un número de asistentes válido";
+    return;
+  }
 
   const dataReserva = {
     email: props.sesion.email,
@@ -80,26 +90,57 @@ async function crearReserva() {
     num_personas: numeroAsistentes.value
   }
   try {
-  const peticion = await fetch("http://localhost:8000/api.php/reservas", {
-    method: 'POST',
-    headers: {
+    const peticion = await fetch("http://localhost:8000/api.php/reservas", {
+      method: 'POST',
+      headers: {
         'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(dataReserva)
-  })
+      },
+      body: JSON.stringify(dataReserva)
+    })
 
-  const respuesta = await peticion.json()
-  
-  if(respuesta.status == "success") {
+    const respuesta = await peticion.json()
 
-  }
+    if (respuesta.status == "success") {
+      mostrarModalReserva.value = false
+      mensajeSuccess.value = "La reserva ha sido realizada correctamente";
 
+      // reseteamos el numero de asistentes para la próxima reserva
+      numeroAsistentes.value = '';
+
+      // setTimeout para cerrar el mensaje automaticamente.
+      setTimeout(() => {
+        mensajeSuccess.value = '';
+      }, 5000);
+    }
   } catch (error) {
     console.error(error);
   }
 
 }
- 
+
+// para quitar el botón de reservar si la fecha actual es posterior a la de la ruta
+const puedeReservar = computed(() => {
+  if (!ruta.value || !ruta.value.fecha) return false;
+
+  const hoy = new Date();
+  const fechaDeLaRuta = new Date(ruta.value.fecha);
+
+  return hoy < fechaDeLaRuta;
+});
+
+// función para mostrar las valoraciones de la ruta
+const valoraciones = ref([]);
+async function getValoraciones() {
+  try {
+    const peticion = await fetch(`http://localhost:8000/api.php/valoraciones?ruta_id=${ruta.value.id}`);
+    const respuesta = await peticion.json();
+    valoraciones.value = respuesta;
+    console.log(respuesta)
+
+  } catch (error) {
+    console.error(error);
+  }
+}
 </script>
 
 <template>
@@ -114,6 +155,14 @@ async function crearReserva() {
             <i class="bi bi-geo-alt-fill me-2"></i>{{ ruta.localidad }}
           </span>
         </div>
+      </div>
+    </div>
+
+    <div v-if="mensajeSuccess !== ''"
+      class="alert alert-custom-success border-0 shadow-sm alert-dismissible fade show mb-4" role="alert">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+        <div class="fw-medium">{{ mensajeSuccess }}</div>
       </div>
     </div>
 
@@ -175,11 +224,59 @@ async function crearReserva() {
                 <p class="text-muted small mb-4 text-center">
                   Asegura tu lugar en esta ruta. Las plazas son limitadas.
                 </p>
-                <button type="submit"
+                <button type="submit" v-if="puedeReservar"
                   class="btn btn-brick btn-lg rounded-pill fw-bold shadow-sm text-uppercase px-5 py-3 w-75"
                   @click="abrirModal">
                   Reservar ahora
                 </button>
+
+                <p class="text-muted small mb-4 text-center" v-else>Este tour ya ha sido realizado. No puedes reservar.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Valoraciones -->
+      <div class="row g-4 mt-5">
+        <div class="col-lg-12">
+          <div class="card-header bg-forest text-white py-3 border-0 rounded-top-4 shadow-sm">
+            <h5 class="m-0 fw-bold text-center text-uppercase">
+              <i class="bi-star-fill me-2"></i>Valoraciones
+            </h5>
+          </div>
+
+          <div class="card-body p-4 bg-white rounded-bottom-4 shadow-sm">
+            <div class="row g-4">
+              <div v-for="valoracion of valoraciones" :key="valoracion.id" class="col-12 col-md-6">
+                <div class="p-3 border rounded-3 h-100 bg-light-subtle shadow-xs">
+
+                  <!-- div estrellas-->
+                  <div class="mb-2 fs-5">
+                    <i v-for="i in 5" :key="i" class="bi pe-1"
+                      :class="i <= valoracion.puntuacion ? 'bi-star-fill text-lime' : 'bi-star text-muted'">
+                    </i>
+                  </div>
+
+                  <!-- div nombre cliente-->
+                  <div class="d-flex align-items-center mb-2">
+                    <i class="bi bi-person-circle text-forest fs-4 me-2"></i>
+                    <p class="mb-0 fw-bold text-forest text-uppercase small">{{ valoracion.cliente_nombre }}</p>
+                  </div>
+
+                  <!-- div comentario-->
+                  <div class="ps-1">
+                    <p class="mb-0 text-muted fst-italic small">
+                      <i class="bi bi-quote text-lime fs-5"></i>
+                      {{ valoracion.comentario }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="valoraciones.length === 0" class="text-center py-4">
+                <p class="text-muted italic">Esta ruta aún no tiene valoraciones.</p>
               </div>
             </div>
           </div>
@@ -206,62 +303,69 @@ async function crearReserva() {
   <div class="modal-backdrop fade show" v-if="mostrarModalLogin"></div>
 
   <div class="modal fade" v-if="mostrarModalReserva" :class="{ show: mostrarModalReserva }" style="display: block;"
-  tabindex="-1" aria-labelledby="modalReservaLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
-      
-      <div class="modal-header bg-forest text-white border-0 py-3">
-        <div class="w-100 text-center position-relative">
-          <h5 class="modal-title text-uppercase fw-bold m-0" id="modalReservaLabel">
-            <i class="bi bi-calendar-check me-2"></i>Finalizar Reserva
-          </h5>
-          <button type="button" class="btn-close btn-close-white position-absolute end-0 top-50 translate-middle-y" 
-            @click="mostrarModalReserva = false"></button>
-        </div>
-      </div>
+    tabindex="-1" aria-labelledby="modalReservaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
 
-      <div class="modal-body p-4 p-lg-5">
-        <div class="text-center mb-4">
-          <p class="text-muted small mb-1">Estás reservando plaza para:</p>
-          <h5 class="text-forest fw-bold text-uppercase">{{ ruta.titulo }}</h5>
+        <div class="modal-header bg-forest text-white border-0 py-3">
+          <div class="w-100 text-center position-relative">
+            <h5 class="modal-title text-uppercase fw-bold m-0" id="modalReservaLabel">
+              <i class="bi bi-calendar-check me-2"></i>Finalizar Reserva
+            </h5>
+            <button type="button" class="btn-close btn-close-white position-absolute end-0 top-50 translate-middle-y"
+              @click="mostrarModalReserva = false"></button>
+          </div>
         </div>
 
-        <div class="row justify-content-center">
-          <div class="col-md-8">
-            <label class="form-label small fw-bold text-uppercase text-muted">Número de asistentes</label>
-            <div class="mb-4 input-group custom-input-group">
-              <span class="input-group-text border-end-0 bg-cream text-forest">
-                <i class="bi bi-person-plus-fill"></i>
-              </span>
-              <input class="form-control border-start-0" type="number" min="1" 
-                placeholder="¿Cuántos vendréis?" v-model="numeroAsistentes" />
-            </div>
+        <div class="modal-body p-4 p-lg-5">
+          <div class="text-center mb-4">
 
-            <div class="p-3 rounded-3 bg-light border-start border-forest border-4">
-              <p class="mb-0 small text-muted">
-                <i class="bi bi-envelope-fill me-2 text-forest"></i>
-                La reserva se está llevando a cabo para: <span class="fw-bold text-dark">{{ props.sesion.email }}</span>
-              </p>
+            <p class="text-muted small mb-1">Estás reservando plaza para:</p>
+            <h5 class="text-forest fw-bold text-uppercase">{{ ruta.titulo }}</h5>
+          </div>
+
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <label class="form-label small fw-bold text-uppercase text-muted">Número de asistentes</label>
+              <div class="mb-2 input-group custom-input-group">
+                <span class="input-group-text border-end-0 bg-cream text-forest">
+                  <i class="bi bi-person-plus-fill"></i>
+                </span>
+                <input class="form-control border-start-0" type="number" min="1" max="20"
+                  placeholder="¿Cuántos vendréis?" v-model="numeroAsistentes" />
+              </div>
+
+              <div v-if="mensajeError !== ''" class="error-bubble d-flex justify-content-center mb-3">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ mensajeError }}
+              </div>
+
+              <div class="p-3 rounded-3 bg-light border-start border-forest border-4">
+                <p class="mb-0 small text-muted">
+                  <i class="bi bi-envelope-fill me-2 text-forest"></i>
+                  La reserva se está llevando a cabo para: <span class="fw-bold text-dark">{{ props.sesion.email
+                    }}</span>
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="modal-footer border-0 d-flex justify-content-center pb-4 gap-3">
-        <button type="button" class="btn btn-outline-forest rounded-pill px-4 fw-bold text-uppercase" 
-          @click="mostrarModalReserva = false">
-          Cancelar
-        </button>
-        <button type="button" @click="crearReserva" class="btn btn-brick btn-lg rounded-pill px-5 fw-bold text-uppercase shadow-sm">
-          Confirmar reserva
-        </button>
+        <div class="modal-footer border-0 d-flex justify-content-center pb-4 gap-3">
+          <button type="button" class="btn btn-outline-forest rounded-pill px-4 fw-bold text-uppercase"
+            @click="mostrarModalReserva = false">
+            Cancelar
+          </button>
+          <button type="button" @click="crearReserva"
+            class="btn btn-brick btn-lg rounded-pill px-5 fw-bold text-uppercase shadow-sm">
+            Confirmar reserva
+          </button>
+        </div>
+
       </div>
-      
     </div>
   </div>
-</div>
 
-<div class="modal-backdrop fade show" v-if="mostrarModalReserva"></div>
+  <div class="modal-backdrop fade show" v-if="mostrarModalReserva"></div>
 
 </template>
 
@@ -318,19 +422,35 @@ async function crearReserva() {
 }
 
 .custom-group .input-group-text {
-    background-color: #F2E8CF;
-    color: #386641;
-    border: 1px solid #ced4da;
-    border-right: none;
+  background-color: #F2E8CF;
+  color: #386641;
+  border: 1px solid #ced4da;
+  border-right: none;
 }
 
 .custom-group .form-control {
-    border-left: none;
-    padding: 12px;
+  border-left: none;
+  padding: 12px;
 }
 
 .form-control:focus {
-    box-shadow: none;
-    border-color: #6A994E;
+  box-shadow: none;
+  border-color: #6A994E;
+}
+
+.text-lime {
+  color: #a7c957;
+}
+
+.error-bubble {
+  color: #BC4749;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.alert-custom-success {
+  background-color: #386641;
+  color: white;
+  border-left: 5px solid #A7C957 !important;
 }
 </style>

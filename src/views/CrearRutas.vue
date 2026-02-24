@@ -7,6 +7,16 @@ import 'leaflet/dist/leaflet.css';
 // router para mostrar otra vista tras la creación
 let router = useRouter();
 
+// para que no pueda entrar nadie que no sea usuario
+const props = defineProps({
+    sesion: Object
+})
+
+if (props.sesion.rol !== "admin") router.push("/");
+
+// fecha actual
+const fechaActual = new Date().toISOString().split('T')[0];
+
 // Parte del script que permite ejecutar el mapa
 const address = ref('');
 let map, marker;
@@ -100,6 +110,12 @@ function clickImagen(e) {
     console.log(foto.value);
 }
 
+// variable para mostrar el modal
+const modalRutaCreada = ref(false);
+function routerPushGestion() {
+    router.push("/gestionRutas");
+}
+
 async function crearRuta() {
 
     // para enviar la imagen tengo que usar FormData en lugar de un objeto JSON normal
@@ -127,7 +143,7 @@ async function crearRuta() {
         const respuesta = await peticion.json();
 
         if (respuesta.status == 'success') {
-            router.push("/gestionRutas");
+            modalRutaCreada.value = true;
         }
 
     } catch (error) {
@@ -231,8 +247,8 @@ function seleccionarGuia(id) {
                             <h5 class="section-title mb-4 text-uppercase"><i
                                     class="bi bi-calendar-event-fill me-2"></i>¿Cuándo será?</h5>
                             <div class="date-picker-wrapper mx-auto">
-                                <input type="date" class="form-control form-control-lg custom-date-input"
-                                    v-model="fecha">
+                                <input type="date" :min="fechaActual"
+                                    class="form-control form-control-lg custom-date-input" v-model="fecha">
                             </div>
                             <p class="mt-3 text-muted text-center">Selecciona la fecha prevista para el inicio de la
                                 ruta.
@@ -328,6 +344,31 @@ function seleccionarGuia(id) {
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal ruta creada-->
+    <div class="modal fade" v-if="modalRutaCreada" :class="{ show: modalRutaCreada }" style="display: block;"
+        tabindex="-1" aria-labelledby="modalRutaCreadaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="btn-close"
+                        @click="modalRutaCreada = false; routerPushGestion"></button>
+                </div>
+
+                <div class="modal-body p-4 text-center">
+                    <p class="mb-1 text-muted small text-uppercase fw-bold">La ruta ha sido creada con éxito.</p>
+                </div>
+
+                <div class="modal-footer border-0 d-flex justify-content-center pb-4 gap-2">
+                    <button type="button" class="btn btn-lime rounded-pill px-5 fw-bold text-uppercase shadow-sm"
+                        @click="routerPushGestion">
+                        Vale
+                    </button>
                 </div>
             </div>
         </div>
@@ -494,5 +535,18 @@ function seleccionarGuia(id) {
 .btn:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+}
+
+.btn-lime {
+    background-color: #A7C957;
+    color: #386641;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-lime:hover {
+    background-color: #8da946;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(167, 201, 87, 0.3) !important;
 }
 </style>

@@ -62,28 +62,30 @@ let comentario = ref("");
 
 async function crearValoracion() {
     const nuevaValoracion = {
-  user_id: props.id_cliente, // ID del usuario que realiza la valoración
-  ruta_id: props.id, // ID de la ruta valorada
-  estrellas: puntuacion.value, // Puntuación de 1 a 5
-  comentario: comentario.value
-};
+        user_id: props.id_cliente, // ID del usuario que realiza la valoración
+        ruta_id: props.id, // ID de la ruta valorada
+        estrellas: puntuacion.value, // Puntuación de 1 a 5
+        comentario: comentario.value
+    };
 
-try {
-    const peticion = await fetch('http://localhost:8000/api.php/valoraciones', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(nuevaValoracion)
-    });
+    console.log(props.id_cliente);
 
-    const resultado = await peticion.json();
-    if (resultado.status == "success") {
+    try {
+        const peticion = await fetch('http://localhost:8000/api.php/valoraciones', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(nuevaValoracion)
+        });
+
+        const resultado = await peticion.json();
+
         emits('valoracionCreada');
         modalValorarRuta.value = false;
-    }
 
-} catch (error) {
-    console.error(error)
-}
+
+    } catch (error) {
+        console.error(error)
+    }
 
 }
 
@@ -120,135 +122,128 @@ function mostrarModalPasarLista() {
         </div>
 
         <div class="card-footer bg-white border-0 text-center pb-4">
-    <span class="btn-detail-link">Ver detalles</span>
-    
-    <!-- este div solo se muestra si estamos viendo la card desde la parte de reservas del cliente.
+            <span class="btn-detail-link">Ver detalles</span>
+
+            <!-- este div solo se muestra si estamos viendo la card desde la parte de reservas del cliente.
     importante usar .stop en el click para que el boton de eliminar no me rediriga a los detalles de
     la ruta -->
 
-    <div v-if="props.reservasCliente">
-        <div class="mt-3 w-100 d-flex justify-content-center">
-            
-            <button 
-                v-if="!props.rutaYaHecha"
-                type="button" 
-                class="btn btn-brick btn-sm rounded-pill px-4 fw-bold text-uppercase shadow-sm"
-                @click.stop="mostrarModalEliminarReserva"
-            >
-                <i class="bi bi-trash3 me-2"></i>Eliminar reserva
-            </button>
+            <div v-if="props.reservasCliente">
+                <div class="mt-3 w-100 d-flex justify-content-center">
 
-            <button 
-                v-else
-                type="button" 
-                class="btn btn-lime btn-sm rounded-pill px-4 fw-bold text-uppercase shadow-sm"
-                @click.stop="mostrarModalValorarRuta"
-            >
-                <i class="bi bi-star-fill me-2"></i>Valorar ruta
-            </button>
+                    <button v-if="!props.rutaYaHecha" type="button"
+                        class="btn btn-brick btn-sm rounded-pill px-4 fw-bold text-uppercase shadow-sm"
+                        @click.stop="mostrarModalEliminarReserva">
+                        <i class="bi bi-trash3 me-2"></i>Eliminar reserva
+                    </button>
 
+                    <button v-else type="button"
+                        class="btn btn-lime btn-sm rounded-pill px-4 fw-bold text-uppercase shadow-sm"
+                        @click.stop="mostrarModalValorarRuta">
+                        <i class="bi bi-star-fill me-2"></i>Valorar ruta
+                    </button>
+
+                </div>
+            </div>
+
+            <div v-if="props.asignacionesGuia">
+                <div class="mt-3 w-100 d-flex justify-content-center">
+                    <button v-if="!props.rutaYaHecha" type="button"
+                        class="btn btn-lime btn-sm rounded-pill px-4 fw-bold text-uppercase shadow-sm"
+                        @click.stop="mostrarModalPasarLista">
+                        <i class="bi bi-trash3 me-2"></i>Pasar lista
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div v-if="props.asignacionesGuia">
-        <div class="mt-3 w-100 d-flex justify-content-center">
-            <button 
-                v-if="!props.rutaYaHecha"
-                type="button" 
-                class="btn btn-lime btn-sm rounded-pill px-4 fw-bold text-uppercase shadow-sm"
-                @click.stop="mostrarModalPasarLista"
-            >
-                <i class="bi bi-trash3 me-2"></i>Pasar lista
-            </button>
-        </div>
-    </div>
-</div>
-    </div>
-
-<!-- modal para eliminar la reserva -->
-<div class="modal fade" v-if="modalEliminarReserva" :class="{ show: modalEliminarReserva }" style="display: block;"
-    tabindex="-1" aria-labelledby="modalEliminarReservaLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="btn-close" @click="modalEliminarReserva = false"></button>
-        </div>
-        <div class="modal-body p-4 text-center">
+    <!-- modal para eliminar la reserva -->
+    <div class="modal fade" v-if="modalEliminarReserva" :class="{ show: modalEliminarReserva }" style="display: block;"
+        tabindex="-1" aria-labelledby="modalEliminarReservaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" @click="modalEliminarReserva = false"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
                     <p class="mb-1 text-muted small text-uppercase fw-bold">Vas a cancelar la reserva en:</p>
                     <h5 class="text-forest fw-bold mb-3 text-uppercase">{{ props.titulo }}</h5>
-                    <p class="text-secondary mb-0">¿Estás seguro? Esta acción no se puede deshacer y perderás tu plaza.</p>
+                    <p class="text-secondary mb-0">¿Estás seguro? Esta acción no se puede deshacer y perderás tu plaza.
+                    </p>
                 </div>
 
                 <div class="modal-footer border-0 d-flex justify-content-center pb-4 gap-2">
-                    <button type="button" class="btn btn-brick rounded-pill px-4 fw-bold text-uppercase shadow-sm" @click="eliminarReserva">
+                    <button type="button" class="btn btn-brick rounded-pill px-4 fw-bold text-uppercase shadow-sm"
+                        @click="eliminarReserva">
                         Eliminar definitivamente
                     </button>
                 </div>
-      </div>
-    </div>
-  </div>
-  <div class="modal-backdrop fade show" v-if="modalEliminarReserva"></div>
-  
-  <!-- modal para valorar la ruta -->
-  <div class="modal fade" v-if="modalValorarRuta" :class="{ show: modalValorarRuta }" style="display: block;"
-    tabindex="-1" aria-labelledby="modalValorarRutaLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        
-        <div class="modal-header">
-          <button type="button" class="btn-close" @click="modalValorarRuta = false"></button>
-        </div>
-
-        <div class="modal-body p-4 text-center">
-            <p class="mb-1 text-muted small text-uppercase fw-bold">Danos tu opinión sobre:</p>
-            <h5 class="text-forest fw-bold mb-3 text-uppercase">{{ props.titulo }}</h5>
-            
-            <div class="mb-4 fs-2">
-                <i v-for="i in 5" :key="i" 
-                   class="bi px-1 cursor-pointer"
-                   :class="i <= puntuacion ? 'bi-star-fill text-lime' : 'bi-star text-muted'"
-                   @click="puntuacion = i">
-                </i>
-            </div>
-
-            <div class="text-start">
-                <label class="form-label text-forest fw-bold small text-uppercase">Tu reseña:</label>
-                <textarea v-model="comentario" class="form-control border-2 shadow-none" rows="3" placeholder="¿Qué tal fue la ruta?"></textarea>
             </div>
         </div>
-
-        <div class="modal-footer border-0 d-flex justify-content-center pb-4 gap-2">
-            <button type="button" class="btn btn-lime rounded-pill px-5 fw-bold text-uppercase shadow-sm" 
-                    @click="crearValoracion" :disabled="puntuacion === 0">
-                Enviar valoración
-            </button>
-        </div>
-
-      </div>
     </div>
-</div>
+    <div class="modal-backdrop fade show" v-if="modalEliminarReserva"></div>
 
-<div class="modal-backdrop fade show" v-if="modalPasarLista"></div>
+    <!-- modal para valorar la ruta -->
+    <div class="modal fade" v-if="modalValorarRuta" :class="{ show: modalValorarRuta }" style="display: block;"
+        tabindex="-1" aria-labelledby="modalValorarRutaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
 
-  <!-- modal para pasar lista-->
-  <div class="modal fade" v-if="modalPasarLista" :class="{ show: modalPasarLista }" style="display: block;"
-    tabindex="-1" aria-labelledby="modalPasarListaLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        
-        <div class="modal-header">
-          <button type="button" class="btn-close" @click="modalPasarLista = false"></button>
+                <div class="modal-header">
+                    <button type="button" class="btn-close" @click="modalValorarRuta = false"></button>
+                </div>
+
+                <div class="modal-body p-4 text-center">
+                    <p class="mb-1 text-muted small text-uppercase fw-bold">Danos tu opinión sobre:</p>
+                    <h5 class="text-forest fw-bold mb-3 text-uppercase">{{ props.titulo }}</h5>
+
+                    <div class="mb-4 fs-2">
+                        <i v-for="i in 5" :key="i" class="bi px-1 cursor-pointer"
+                            :class="i <= puntuacion ? 'bi-star-fill text-lime' : 'bi-star text-muted'"
+                            @click="puntuacion = i">
+                        </i>
+                    </div>
+
+                    <div class="text-start">
+                        <label class="form-label text-forest fw-bold small text-uppercase">Tu reseña:</label>
+                        <textarea v-model="comentario" class="form-control border-2 shadow-none" rows="3"
+                            placeholder="¿Qué tal fue la ruta?"></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 d-flex justify-content-center pb-4 gap-2">
+                    <button type="button" class="btn btn-lime rounded-pill px-5 fw-bold text-uppercase shadow-sm"
+                        @click="crearValoracion" :disabled="puntuacion === 0">
+                        Enviar valoración
+                    </button>
+                </div>
+
+            </div>
         </div>
-
-        <div class="modal-body p-4 text-center">
-
-        </div>
-            
-      </div>
     </div>
-</div>
 
-<div class="modal-backdrop fade show" v-if="modalPasarLista"></div>
+    <div class="modal-backdrop fade show" v-if="modalValorarRuta"></div>
+
+    <!-- modal para pasar lista-->
+    <div class="modal fade" v-if="modalPasarLista" :class="{ show: modalPasarLista }" style="display: block;"
+        tabindex="-1" aria-labelledby="modalPasarListaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="btn-close" @click="modalPasarLista = false"></button>
+                </div>
+
+                <div class="modal-body p-4 text-center">
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop fade show" v-if="modalPasarLista"></div>
 </template>
 
 <style scoped>

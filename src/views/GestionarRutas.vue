@@ -1,6 +1,14 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 
+
+// para que no pueda entrar nadie que no sea usuario
+const props = defineProps({
+    sesion: Object
+})
+
+if (props.sesion.rol !== "admin") router.push("/");
+
 // variable y función para la retroalimentación
 const mensajeSuccess = ref('');
 function mensajeSuccessReset() {
@@ -106,14 +114,15 @@ function cancelEdit() {
         <div class="container-fluid px-lg-5">
             <div class="row justify-content-center">
                 <div class="col-12 col-xl-11">
-                    
+
                     <div class="text-center mb-5">
-                        <h2 class="fw-bold text-uppercase text-forest">Gestión de Rutas</h2>
+                        <h2 class="fw-bold text-uppercase text-forest">Gestión de rutas</h2>
                         <div class="divider mx-auto"></div>
                     </div>
 
                     <div v-if="mensajeSuccess !== ''"
-                        class="alert alert-custom-success border-0 shadow-sm alert-dismissible fade show mb-4" role="alert">
+                        class="alert alert-custom-success border-0 shadow-sm alert-dismissible fade show mb-4"
+                        role="alert">
                         <div class="d-flex align-items-center">
                             <i class="bi bi-check-circle-fill me-2 fs-5"></i>
                             <div class="fw-medium">{{ mensajeSuccess }}</div>
@@ -151,20 +160,24 @@ function cancelEdit() {
 
                                         <td class="text-center">
                                             <div class="small fw-bold text-dark">{{ ruta.fecha }}</div>
-                                            <div class="small text-muted"><i class="bi bi-clock me-1"></i>{{ ruta.hora }}</div>
+                                            <div class="small text-muted"><i class="bi bi-clock me-1"></i>{{ ruta.hora
+                                                }}</div>
                                         </td>
 
                                         <td v-if="editGuiaID == ruta.id" style="min-width: 200px;">
                                             <div class="input-group input-group-sm edit-group shadow-sm">
-                                                <select class="form-select border-lime" v-model="guiaAsignado" @focus="obtenerGuias(ruta.fecha)">
+                                                <select class="form-select border-lime" v-model="guiaAsignado"
+                                                    @focus="obtenerGuias(ruta.fecha)">
                                                     <option v-if="ruta.guia_nombre != null" :value="guiaAsignado">
                                                         {{ ruta.guia_nombre }}
                                                     </option>
-                                                    <option v-for="guia in guiasDisponibles" :key="guia.id" :value="guia.id">
+                                                    <option v-for="guia in guiasDisponibles" :key="guia.id"
+                                                        :value="guia.id">
                                                         {{ guia.nombre }} (ID: {{ guia.id }})
                                                     </option>
                                                 </select>
-                                                <button @click="asignarGuia(ruta.id, guiaAsignado)" class="btn btn-lime">
+                                                <button @click="asignarGuia(ruta.id, guiaAsignado)"
+                                                    class="btn btn-lime">
                                                     <i class="bi bi-check-lg text-white"></i>
                                                 </button>
                                                 <button @click="cancelEdit()" class="btn btn-brick">
@@ -175,17 +188,20 @@ function cancelEdit() {
 
                                         <td v-else>
                                             <div class="d-flex align-items-center">
-                                                <i class="bi bi-person-badge me-2" :class="ruta.guia_nombre ? 'text-forest' : 'text-muted'"></i>
-                                                <span :class="ruta.guia_nombre ? 'fw-medium text-dark' : 'text-muted small italic'">
+                                                <i class="bi bi-person-badge me-2"
+                                                    :class="ruta.guia_nombre ? 'text-forest' : 'text-muted'"></i>
+                                                <span
+                                                    :class="ruta.guia_nombre ? 'fw-medium text-dark' : 'text-muted small italic'">
                                                     {{ ruta.guia_nombre || 'Sin asignar' }}
                                                 </span>
                                             </div>
                                         </td>
 
                                         <td class="text-center">
-                                            <span :class="['badge rounded-pill px-3 py-2', 
+                                            <span :class="['badge rounded-pill px-3 py-2',
                                                 ruta.asistentes < 10 ? 'bg-warning-custom' : 'bg-lime']">
-                                                <i v-if="ruta.asistentes < 10" class="bi bi-exclamation-triangle-fill me-1"></i>
+                                                <i v-if="ruta.asistentes < 10"
+                                                    class="bi bi-exclamation-triangle-fill me-1"></i>
                                                 {{ ruta.asistentes }}
                                             </span>
                                         </td>
@@ -215,15 +231,28 @@ function cancelEdit() {
 </template>
 
 <style scoped>
-/* Colores de Marca */
-.text-forest { color: #386641; }
-.bg-forest { background-color: #386641; }
-.bg-lime { background-color: #A7C957; }
-.bg-brick { background-color: #BC4749; }
-.text-cream { color: #F2E8CF; }
+.text-forest {
+    color: #386641;
+}
+
+.bg-forest {
+    background-color: #386641;
+}
+
+.bg-lime {
+    background-color: #A7C957;
+}
+
+.bg-brick {
+    background-color: #BC4749;
+}
+
+.text-cream {
+    color: white;
+}
 
 .bg-warning-custom {
-    background-color: #BC4749; /* Rojo ladrillo para avisos de pocos asistentes */
+    background-color: #BC4749;
     color: white;
 }
 
@@ -243,10 +272,9 @@ function cancelEdit() {
     background-color: #fcfaf2 !important;
 }
 
-/* Alerta personalizada */
 .alert-custom-success {
     background-color: #386641;
-    color: #F2E8CF;
+    color: white;
     border-left: 5px solid #A7C957 !important;
 }
 
@@ -254,16 +282,24 @@ function cancelEdit() {
     filter: invert(1) grayscale(100%) brightness(200%);
 }
 
-/* Inputs y Selects */
 .edit-group .btn {
     padding: 0.25rem 0.75rem;
 }
 
-.btn-lime { background-color: #A7C957; border: none; }
-.btn-brick { background-color: #BC4749; border: none; }
-.border-lime { border-color: #A7C957 !important; }
+.btn-lime {
+    background-color: #A7C957;
+    border: none;
+}
 
-/* Botones Icono */
+.btn-brick {
+    background-color: #BC4749;
+    border: none;
+}
+
+.border-lime {
+    border-color: #A7C957 !important;
+}
+
 .btn-icon {
     width: 35px;
     height: 35px;
@@ -299,5 +335,7 @@ function cancelEdit() {
     letter-spacing: 0.5px;
 }
 
-.italic { font-style: italic; }
+.italic {
+    font-style: italic;
+}
 </style>

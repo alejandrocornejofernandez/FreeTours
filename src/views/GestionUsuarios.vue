@@ -1,5 +1,13 @@
 <script setup>
+import router from '@/router';
 import { onMounted, ref } from 'vue';
+
+// para que no pueda entrar nadie que no sea usuario
+const props = defineProps({
+    sesion: Object
+})
+
+if (props.sesion.rol !== "admin") router.push("/");
 
 const users = ref("");
 const mensajeSuccess = ref("");
@@ -104,7 +112,8 @@ function cancelEdit() {
                     </div>
 
                     <div v-if="mensajeSuccess !== ''"
-                        class="alert alert-custom-success border-0 shadow-sm alert-dismissible fade show mb-4" role="alert">
+                        class="alert alert-custom-success border-0 shadow-sm alert-dismissible fade show mb-4"
+                        role="alert">
                         <div class="d-flex align-items-center">
                             <i class="bi bi-check-circle-fill me-2 fs-5"></i>
                             <div class="fw-medium">{{ mensajeSuccess }}</div>
@@ -143,8 +152,7 @@ function cancelEdit() {
                                                     <option>guia</option>
                                                     <option>cliente</option>
                                                 </select>
-                                                <button @click="saveUserRol(user.id, userRol)"
-                                                    class="btn btn-lime">
+                                                <button @click="saveUserRol(user.id, userRol)" class="btn btn-lime">
                                                     <i class="bi bi-check-lg text-white"></i>
                                                 </button>
                                                 <button @click="cancelEdit()" class="btn btn-brick">
@@ -154,9 +162,9 @@ function cancelEdit() {
                                         </td>
 
                                         <td v-else>
-                                            <span :class="['badge rounded-pill px-3 py-2', 
-                                                user.rol === 'admin' ? 'bg-forest' : 
-                                                user.rol === 'guia' ? 'bg-fern' : 'bg-lime']">
+                                            <span :class="['badge rounded-pill px-3 py-2',
+                                                user.rol === 'admin' ? 'bg-forest' :
+                                                    user.rol === 'guia' ? 'bg-fern' : 'bg-lime']">
                                                 {{ user.rol }}
                                             </span>
                                         </td>
@@ -168,8 +176,7 @@ function cancelEdit() {
                                                     <i class="bi bi-pencil-square"></i>
                                                 </button>
                                                 <button @click="deleteUser(user.id)"
-                                                    class="btn btn-icon btn-outline-brick"
-                                                    title="Eliminar usuario">
+                                                    class="btn btn-icon btn-outline-brick" title="Eliminar usuario">
                                                     <i class="bi bi-trash3"></i>
                                                 </button>
                                             </div>
@@ -187,13 +194,29 @@ function cancelEdit() {
 </template>
 
 <style scoped>
-/* Colores de Marca */
-.text-forest { color: #386641; }
-.bg-forest { background-color: #386641; }
-.bg-fern { background-color: #6A994E; }
-.bg-lime { background-color: #A7C957; }
-.bg-brick { background-color: #BC4749; }
-.text-cream { color: #F2E8CF; }
+.text-forest {
+    color: #386641;
+}
+
+.bg-forest {
+    background-color: #386641;
+}
+
+.bg-fern {
+    background-color: #6A994E;
+}
+
+.bg-lime {
+    background-color: #A7C957;
+}
+
+.bg-brick {
+    background-color: #BC4749;
+}
+
+.text-cream {
+    color: white;
+}
 
 .divider {
     width: 60px;
@@ -202,7 +225,6 @@ function cancelEdit() {
     border-radius: 2px;
 }
 
-/* Estilos de la tabla */
 .table thead {
     border-bottom: 2px solid #6A994E;
 }
@@ -216,10 +238,9 @@ function cancelEdit() {
     background-color: #fcfaf2 !important;
 }
 
-/* Alerta personalizada */
 .alert-custom-success {
     background-color: #386641;
-    color: #F2E8CF;
+    color: white;
     border-left: 5px solid #A7C957 !important;
 }
 
@@ -227,7 +248,6 @@ function cancelEdit() {
     filter: invert(1) grayscale(100%) brightness(200%);
 }
 
-/* Inputs de edición */
 .edit-group .btn {
     padding: 0.25rem 0.75rem;
 }
@@ -246,7 +266,6 @@ function cancelEdit() {
     border-color: #A7C957 !important;
 }
 
-/* Botones Icono */
 .btn-icon {
     width: 35px;
     height: 35px;

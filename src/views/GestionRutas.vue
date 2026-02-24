@@ -1,9 +1,15 @@
 <script setup>
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+// router para mostrar otra vista tras la creación
+let router = useRouter();
+
+// para que no pueda entrar nadie que no sea usuario
 const props = defineProps({
     sesion: Object
 })
+
 </script>
 
 <template>
@@ -15,30 +21,38 @@ const props = defineProps({
             </div>
 
             <div class="row g-4 justify-content-center">
-                <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center" v-if="props.sesion && props.sesion.rol == 'admin'">
-                    <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden admin-card" style="width: 18rem;">
+                <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center"
+                    v-if="props.sesion && props.sesion.rol == 'admin'">
+                    <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden admin-card"
+                        style="width: 18rem;">
                         <div class="img-wrapper">
                             <img class="card-img-top" src="/images/create-routes-image.jpg" alt="Crear rutas">
                         </div>
                         <div class="card-body d-flex flex-column p-4">
                             <h5 class="card-title text-uppercase text-center fw-bold text-forest">Crear rutas</h5>
-                            <p class="card-text text-center text-muted small flex-grow-1">Crea tus rutas fácilmente y planifica tus recorridos en un par de clics.</p>
-                            <RouterLink to="/gestionRutas/crearRutas" class="btn btn-forest w-100 rounded-pill fw-bold text-uppercase shadow-sm mt-3">
+                            <p class="card-text text-center text-muted small flex-grow-1">Crea tus rutas fácilmente y
+                                planifica tus recorridos en un par de clics.</p>
+                            <RouterLink to="/gestionRutas/crearRutas"
+                                class="btn btn-forest w-100 rounded-pill fw-bold text-uppercase shadow-sm mt-3">
                                 Crear ahora
                             </RouterLink>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center" v-if="props.sesion && props.sesion.rol == 'admin'">
-                    <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden admin-card" style="width: 18rem;">
+                <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center"
+                    v-if="props.sesion && props.sesion.rol == 'admin'">
+                    <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden admin-card"
+                        style="width: 18rem;">
                         <div class="img-wrapper">
                             <img class="card-img-top" src="/images/create-routes-image.jpg" alt="Gestionar rutas">
                         </div>
                         <div class="card-body d-flex flex-column p-4">
                             <h5 class="card-title text-uppercase text-center fw-bold text-forest">Gestionar rutas</h5>
-                            <p class="card-text text-center text-muted small flex-grow-1">Gestiona las rutas existentes, edita información y controla el catálogo como administrador.</p>
-                            <RouterLink to="/gestionRutas/gestionarRutas" class="btn btn-forest w-100 rounded-pill fw-bold text-uppercase shadow-sm mt-3">
+                            <p class="card-text text-center text-muted small flex-grow-1">Gestiona las rutas existentes,
+                                edita información y controla el catálogo como administrador.</p>
+                            <RouterLink to="/gestionRutas/gestionarRutas"
+                                class="btn btn-forest w-100 rounded-pill fw-bold text-uppercase shadow-sm mt-3">
                                 Gestionar
                             </RouterLink>
                         </div>
@@ -46,20 +60,28 @@ const props = defineProps({
                 </div>
 
                 <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
-                    <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden admin-card" style="width: 18rem;">
+                    <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden admin-card"
+                        style="width: 18rem;">
                         <div class="img-wrapper">
                             <img class="card-img-top" src="/images/show-routes-image.jpg" alt="Ver rutas">
                         </div>
                         <div class="card-body d-flex flex-column p-4">
                             <h5 class="card-title text-uppercase text-center fw-bold text-forest">Ver rutas</h5>
-                            <p class="card-text text-center text-muted small flex-grow-1">Visualiza tus recorridos y planifica mejor tus viajes en el mapa interactivo.</p>
-                            <RouterLink to="/gestionRutas/verRutas" class="btn btn-forest w-100 rounded-pill fw-bold text-uppercase shadow-sm mt-3" v-if="props.sesion && props.sesion.rol == 'admin'">
+                            <p class="card-text text-center text-muted small flex-grow-1">Visualiza tus recorridos y
+                                planifica mejor tus viajes en el mapa interactivo.</p>
+                            <RouterLink to="/gestionRutas/verRutas"
+                                class="btn btn-forest w-100 rounded-pill fw-bold text-uppercase shadow-sm mt-3"
+                                v-if="props.sesion && props.sesion.rol == 'admin'">
                                 Ver listado
                             </RouterLink>
-                            <RouterLink to="/gestionRutas/verRutasCliente" class="btn btn-forest w-100 rounded-pill fw-bold text-uppercase shadow-sm mt-3" v-if="props.sesion && props.sesion.rol == 'cliente'">
+                            <RouterLink to="/gestionRutas/verRutasCliente"
+                                class="btn btn-forest w-100 rounded-pill fw-bold text-uppercase shadow-sm mt-3"
+                                v-if="props.sesion && props.sesion.rol == 'cliente'">
                                 Ver listado
                             </RouterLink>
-                            <RouterLink to="/gestionRutas/verRutasGuia" class="btn btn-forest w-100 rounded-pill fw-bold text-uppercase shadow-sm mt-3" v-if="props.sesion && props.sesion.rol == 'guia'">
+                            <RouterLink to="/gestionRutas/verRutasGuia"
+                                class="btn btn-forest w-100 rounded-pill fw-bold text-uppercase shadow-sm mt-3"
+                                v-if="props.sesion && props.sesion.rol == 'guia'">
                                 Ver listado
                             </RouterLink>
                         </div>
@@ -72,7 +94,6 @@ const props = defineProps({
 </template>
 
 <style scoped>
-
 .text-forest {
     color: #386641;
 }

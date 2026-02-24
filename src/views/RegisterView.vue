@@ -3,16 +3,42 @@ import { computed, ref } from 'vue'
 import router from '@/router'
 
 // variables del registro
-const name = ref('')
-const email = ref('')
-const password = ref('')
-const confirmPassword = ref('')
+const name = ref('');
+const email = ref('');
+const password = ref('');
+const confirmPassword = ref('');
+const mensajeSuccess = ref('');
+const enviado = ref(false); // esta variable se vuelve true cuando pulso el botón de enviar
 
 // variables computed para las clases de los inputs, se añade reactividad al formulario
-const nameInput = computed(() => name.value.match(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'-]{2,50}$/) ? 'valid-input' : '');
-const emailInput = computed(() => email.value.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/) ? 'valid-input' : '');
-const passwordInput = computed(() => password.value.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&_-])([A-Za-z\d$@$!%*?&]|[^ ]){8,}$/) ? 'valid-input' : '');
-const confirmPasswordInput = computed(() => (password.value.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&_-])([A-Za-z\d$@$!%*?&]|[^ ]){8,}$/,) && password.value == confirmPassword.value ? 'valid-input' : ''))
+const nameInput = computed(() => {
+  const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'-]{2,50}$/;
+  if (name.value.match(regex)) return 'valid-input';
+  if (enviado.value && !name.value.match(regex)) return 'error-input';
+  return '';
+});
+
+const emailInput = computed(() => {
+  const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+  if (email.value.match(regex)) return 'valid-input';
+  if (enviado.value && !email.value.match(regex)) return 'error-input';
+  return '';
+});
+
+const passwordInput = computed(() => {
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&_-])([A-Za-z\d$@$!%*?&]|[^ ]){8,}$/;
+  if (password.value.match(regex)) return 'valid-input';
+  if (enviado.value && !password.value.match(regex)) return 'error-input';
+  return '';
+});
+
+const confirmPasswordInput = computed(() => {
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&_-])([A-Za-z\d$@$!%*?&]|[^ ]){8,}$/;
+  const esValido = password.value.match(regex) && password.value === confirmPassword.value;
+  if (esValido) return 'valid-input';
+  if (enviado.value && !esValido) return 'error-input';
+  return '';
+});
 
 // funcion para registrarse
 async function register() {
@@ -33,7 +59,11 @@ async function register() {
   const respuesta = await peticion.json()
 
   if (respuesta.status == 'success') {
-    router.push('/')
+    mensajeSuccess.value = "Te has registrado correctamente. Vas a ser redirigido al login."
+    setTimeout(() => {
+      router.push('/login');
+    }, 3000)
+
   } else {
     console.log(respuesta.message)
   }
@@ -41,24 +71,10 @@ async function register() {
 
 // antes de enviar la petición al servidor, voy a crear una función que asegure que los datos que se mandan son válidos.
 function validarRegistro() {
-  let nameValido = false
-  let emailValido = false
-  let contraseñaValida = false
+  enviado.value = true;
 
-  // validamos con expresiones regulares los 3 campos del registro
-  if (email.value.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/)) {
-    console.log('Email válido')
-    emailValido = true
-  } else {
-    emailInput.value = 'error-input'
-  }
-
-  if (name.value.match(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'-]{2,50}$/)) {
-    console.log('Nombre válido')
-    nameValido = true
-  } else {
-    nameInput.value = 'error-input'
-  }
+  const nameValido = nameInput.value === 'valid-input';
+  const emailValido = emailInput.value === 'valid-input';
 
   /* en el caso de la contraseña, como hacemos que se introduzca dos veces, comparamos ambos inputs. 
     / la expresión regular asegura que la contraseña contenga al menos: 
@@ -69,21 +85,13 @@ function validarRegistro() {
     / - No espacios en blanco
     / - Al menos 1 caracter especial
     */
+  const contraseñaValida = confirmPasswordInput.value === 'valid-input';
 
-  if (
-    password.value.match(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&_-])([A-Za-z\d$@$!%*?&]|[^ ]){8,}$/,
-    ) &&
-    password.value == confirmPassword.value
-  ) {
-    console.log('Contraseña válida')
-    contraseñaValida = true
+  if (nameValido && emailValido && contraseñaValida) {
+    register();
   } else {
-    passwordInput.value = 'error-input'
-    confirmPasswordInput.value = 'error-input'
+    console.log('El formulario contiene errores');
   }
-
-  if (nameValido && emailValido && contraseñaValida) register()
 }
 
 </script>
@@ -92,6 +100,16 @@ function validarRegistro() {
   <div class="py-5">
     <div class="container">
       <div class="row justify-content-center">
+
+        <div v-if="mensajeSuccess !== ''"
+          class="alert alert-custom-success border-0 shadow-sm alert-dismissible fade show mb-4" role="alert">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+            <div class="fw-medium">{{ mensajeSuccess }}</div>
+          </div>
+          <button type="button" class="btn-close" @click="mensajeSuccess = ''"></button>
+        </div>
+
         <div class="col-12 col-md-8 col-lg-5">
           <div class="card shadow-lg border-0 rounded-4 overflow-hidden register-card">
             <div class="card-body p-4 p-lg-5 bg-white">
@@ -110,6 +128,7 @@ function validarRegistro() {
                     type="text" placeholder="Nombre" />
                   <span class="input-group-text bg-white border-start-0">
                     <i class="bi bi-check-circle-fill text-lime" v-if="nameInput == 'valid-input'"></i>
+                    <i class="bi bi-x-lg text-error" v-else-if="nameInput !== 'valid-input' && enviado"></i>
                   </span>
                 </div>
 
@@ -121,6 +140,7 @@ function validarRegistro() {
                     type="text" placeholder="Email" />
                   <span class="input-group-text bg-white border-start-0">
                     <i class="bi bi-check-circle-fill text-lime" v-if="emailInput == 'valid-input'"></i>
+                    <i class="bi bi-x-lg text-error" v-else-if="emailInput !== 'valid-input' && enviado"></i>
                   </span>
                 </div>
 
@@ -132,6 +152,7 @@ function validarRegistro() {
                     type="password" placeholder="Contraseña" />
                   <span class="input-group-text bg-white border-start-0">
                     <i class="bi bi-check-circle-fill text-lime" v-if="passwordInput == 'valid-input'"></i>
+                    <i class="bi bi-x-lg text-error" v-else-if="passwordInput !== 'valid-input' && enviado"></i>
                   </span>
                 </div>
 
@@ -143,6 +164,7 @@ function validarRegistro() {
                     v-model.trim="confirmPassword" type="password" placeholder="Repite la contraseña" />
                   <span class="input-group-text bg-white border-start-0">
                     <i class="bi bi-check-circle-fill text-lime" v-if="confirmPasswordInput == 'valid-input'"></i>
+                    <i class="bi bi-x-lg text-error" v-else-if="confirmPasswordInput !== 'valid-input' && enviado"></i>
                   </span>
                 </div>
 
@@ -177,6 +199,10 @@ function validarRegistro() {
 /* color para el texto */
 .text-lime {
   color: #6A994E;
+}
+
+.text-error {
+  color: #BC4749 !important;
 }
 
 /* card con color personalizado */
@@ -227,5 +253,12 @@ function validarRegistro() {
 
 .register-link:hover {
   color: #386641;
+}
+
+/* mensaje de confirmación */
+.alert-custom-success {
+  background-color: #386641;
+  color: white;
+  border-left: 5px solid #A7C957 !important;
 }
 </style>

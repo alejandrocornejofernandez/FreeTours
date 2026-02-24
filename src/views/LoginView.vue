@@ -66,7 +66,7 @@ async function login() {
                 <h2 class="fw-bold text-uppercase text-forest">Iniciar sesión</h2>
                 <p class="text-muted small">Inicia sesión en FreeTours</p>
 
-                <div v-if="errorMessage != ''" class="alert alert-custom-danger mt-3">
+                <div v-if="errorMessage != ''" class="alert error-bubble mt-3">
                   <i class="bi bi-exclamation-triangle-fill me-2"></i>
                   {{ errorMessage }}
                 </div>
@@ -87,9 +87,6 @@ async function login() {
                   </span>
                   <input class="form-control border-start-0 border-end-0" v-model.trim="password" type="password"
                     placeholder="Contraseña" />
-                  <span class="input-group-text bg-white border-start-0">
-                    <i class="bi bi-check-circle-fill text-lime" v-if="passwordInput == 'valid-input'"></i>
-                  </span>
                 </div>
 
                 <div class="d-grid mb-3">
@@ -161,5 +158,14 @@ async function login() {
 
 .register-link:hover {
   color: #386641;
+}
+
+.error-bubble {
+  background-color: #BC4749;
+  color: white;
+  padding: 6px 20px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: bold;
 }
 </style>
